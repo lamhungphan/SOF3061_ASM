@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/sof3061
+    username: root
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        ddl-auto: update
+    show-sql: true
+
+openapi:
+  service:
+    api-docs: sof3061-backend
+    server: http://localhost:8080
+    title: Backend
+    version: 1.0.0

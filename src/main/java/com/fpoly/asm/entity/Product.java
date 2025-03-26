@@ -30,12 +30,14 @@ public class Product {
 
     private String image;
 
-    private Float price;
+    private Double price;
 
     @Column(name = "publish_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date publishDate;
 
     @Column(name = "last_update_time", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastUpdateTime;
 
     @NotNull
