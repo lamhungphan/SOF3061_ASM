@@ -6,7 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -33,12 +34,11 @@ public class Product {
     private Double price;
 
     @Column(name = "publish_date", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date publishDate;
+    private LocalDate publishDate;
 
     @Column(name = "last_update_time", nullable = true)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date lastUpdateTime;
+    private LocalDateTime lastUpdateTime;
+
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

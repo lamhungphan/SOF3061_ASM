@@ -4,7 +4,6 @@ import com.fpoly.asm.controller.request.ProductCreationRequest;
 import com.fpoly.asm.controller.request.ProductUpdateRequest;
 import com.fpoly.asm.controller.response.ApiResponse;
 import com.fpoly.asm.service.ProductService;
-import com.fpoly.asm.service.impl.ProductServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

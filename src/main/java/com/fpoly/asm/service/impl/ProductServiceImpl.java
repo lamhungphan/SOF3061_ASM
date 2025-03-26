@@ -20,8 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
 
         Product product = getProduct(request.getProductId());
 
-        product.setLastUpdateTime(Date.valueOf(LocalDate.now()));
+        product.setLastUpdateTime(LocalDateTime.now());
         if (request.getCategoryId() != null) {
             product.setCategory(getCategoryById(request.getCategoryId()));
         }        productMapper.updateProduct(product, request);

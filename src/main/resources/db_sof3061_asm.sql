@@ -22,8 +22,8 @@ CREATE TABLE products (
     description TEXT,
     image VARCHAR(255),
     price DECIMAL(10,2) NOT NULL,
-    publish_date TIMESTAMP NULL,
-    last_update_time TIMESTAMP NULL,
+    publish_date DATE NULL,
+    last_update_time DATETIME NULL,
     category_id INT NOT NULL,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );

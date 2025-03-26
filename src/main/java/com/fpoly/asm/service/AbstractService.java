@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public abstract class AbstractService<T, ID> implements BaseService<T, ID> {
+public abstract class AbstractService<T, ID, RQ> implements BaseService<T, ID, RQ> {
 
     protected final JpaRepository<T, ID> repository;
 
