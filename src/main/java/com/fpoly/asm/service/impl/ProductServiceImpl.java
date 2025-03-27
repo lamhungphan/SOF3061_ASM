@@ -1,48 +1,31 @@
 package com.fpoly.asm.service.impl;
 
-import com.fpoly.asm.controller.request.OrderRequest;
 import com.fpoly.asm.controller.request.ProductRequest;
-import com.fpoly.asm.entity.Order;
-import com.fpoly.asm.mapper.ProductMapper;
-import com.fpoly.asm.controller.request.ProductCreationRequest;
-import com.fpoly.asm.controller.request.ProductUpdateRequest;
-import com.fpoly.asm.controller.response.ProductPageResponse;
-import com.fpoly.asm.controller.response.ProductResponse;
-import com.fpoly.asm.entity.Category;
 import com.fpoly.asm.entity.Product;
-import com.fpoly.asm.exception.ResourceNotFoundException;
 import com.fpoly.asm.repository.CategoryRepository;
 import com.fpoly.asm.repository.ProductRepository;
 import com.fpoly.asm.service.AbstractService;
 import com.fpoly.asm.service.ProductService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j(topic = "Product-Service")
 public class ProductServiceImpl extends AbstractService<Product, Integer, ProductRequest> implements ProductService {
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductServiceImpl(JpaRepository<Product, Integer> repository) {
-        super(repository);
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository) {
+        super(productRepository);
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
     public void update(ProductRequest request) {
 
     }
-
+}
 //    private final ProductRepository productRepository;
 //    private final CategoryRepository categoryRepository;
 //    private final ProductMapper productMapper;
@@ -140,4 +123,4 @@ public class ProductServiceImpl extends AbstractService<Product, Integer, Produc
 //        return categoryRepository.findById(id)
 //                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 //    }
-}
+//}

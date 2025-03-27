@@ -14,7 +14,7 @@ public class ProductRequest {
     private String size;
     private String description;
     private String image;
-    private Float price;
+    private Double price;
     private LocalDate publishDate;
     private Integer categoryId;
 }
