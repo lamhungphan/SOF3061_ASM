@@ -9,5 +9,5 @@ import lombok.*;
 public class CartRequest {
     private Integer userId;
     private Integer productId;
-    private int quantity;
+    private Integer quantity;
 }

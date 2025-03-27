@@ -12,6 +12,7 @@ public interface CartMapper {
     @Mapping(source = "productId", target = "product.id")
     Cart toCart(CartRequest request);
 
+    @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "product.id", target = "productId")
     CartResponse toCartResponse(Cart cart);
 }
-

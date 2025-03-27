@@ -27,4 +27,10 @@ public class Cart {
     private Product product;
 
     private int quantity;
+
+    public Cart(Account user, Product product, int quantity) {
+        this.user = user;
+        this.product = product;
+        this.quantity = quantity;
+    }
 }

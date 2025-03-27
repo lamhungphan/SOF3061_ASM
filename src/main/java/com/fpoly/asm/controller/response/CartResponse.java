@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 public class CartResponse {
     private Integer id;
-    private AccountResponse user;
-    private ProductResponse product;
-    private int quantity;
+    private Integer userId;
+    private Integer productId;
+    private Integer quantity;
 }

@@ -18,4 +18,3 @@ public class ProductRequest {
     private LocalDate publishDate;
     private Integer categoryId;
 }
-

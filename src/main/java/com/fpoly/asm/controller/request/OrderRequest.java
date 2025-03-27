@@ -12,4 +12,3 @@ public class OrderRequest {
     private Double totalPrice;
     private Order.Status status;
 }
-
