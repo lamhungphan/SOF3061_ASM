@@ -6,6 +6,7 @@ import com.fpoly.asm.entity.Category;
 import com.fpoly.asm.mapper.CategoryMapper;
 import com.fpoly.asm.service.CategoryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class CategoryController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "5") int size) {
         Page<Category> categories = categoryService.getAll(keyword, sort, page, size);
         Page<CategoryResponse> response = categories.map(categoryMapper::toCategoryResponse);
         return ResponseEntity.ok(response);
@@ -42,11 +43,12 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryResponse> createCategory(@RequestBody CategoryRequest request) {
+    public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest request) {
         Category category = categoryMapper.toCategory(request);
         Category savedCategory = categoryService.save(category);
         return ResponseEntity.ok(categoryMapper.toCategoryResponse(savedCategory));
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateCategory(@PathVariable Integer id, @RequestBody CategoryRequest request) {

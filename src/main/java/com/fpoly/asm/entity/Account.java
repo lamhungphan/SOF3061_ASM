@@ -14,6 +14,7 @@ import lombok.Setter;
 @Table(name = "accounts")
 public class Account {
     @Id
+    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -37,5 +38,5 @@ public class Account {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.USER;
+    private Role role = Role.CUSTOMER;
 }

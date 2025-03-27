@@ -15,6 +15,7 @@ import java.util.List;
 @Table(name = "orders")
 public class Order {
     @Id
+    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 

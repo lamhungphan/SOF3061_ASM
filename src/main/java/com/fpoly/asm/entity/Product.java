@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "products")
 public class Product {
     @Id
-    @Column(name = "product_id", nullable = false)
+    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -39,11 +39,9 @@ public class Product {
     @Column(name = "last_update_time", nullable = true)
     private LocalDateTime lastUpdateTime;
 
-
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
-
 }
 

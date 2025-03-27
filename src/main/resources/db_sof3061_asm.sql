@@ -6,11 +6,11 @@ CREATE TABLE accounts (
     full_name VARCHAR(100),
     phone VARCHAR(15) UNIQUE,
     address VARCHAR(255),
-    role ENUM('USER', 'ADMIN') NOT NULL
+    role ENUM('CUSTOMER', 'STAFF', 'DIRECTOR') NOT NULL
 );
 
 CREATE TABLE categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 

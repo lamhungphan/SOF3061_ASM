@@ -1,6 +1,7 @@
 package com.fpoly.asm.mapper;
 
 import com.fpoly.asm.controller.request.ProductCreationRequest;
+import com.fpoly.asm.controller.request.ProductRequest;
 import com.fpoly.asm.controller.request.ProductUpdateRequest;
 import com.fpoly.asm.controller.response.ProductPageResponse;
 import com.fpoly.asm.controller.response.ProductResponse;
@@ -16,13 +17,13 @@ import java.util.List;
 public interface ProductMapper {
 
     @Mapping(source = "categoryId", target = "category.id")
-    Product toProduct(ProductCreationRequest request);
+    Product toProduct(ProductRequest request);
 
     @Mapping(source = "category.id", target = "categoryId")
     ProductResponse toProductResponse(Product product);
 
     @Mapping(target = "category", ignore = true)
-    void updateProduct(@MappingTarget Product product, ProductUpdateRequest request);
+    void updateProduct(@MappingTarget Product product, ProductRequest request);
     default ProductPageResponse toProductPageResponse(Page<Product> productPage, int page, int size) {
         List<ProductResponse> productList = productPage.stream()
                 .map(this::toProductResponse)
