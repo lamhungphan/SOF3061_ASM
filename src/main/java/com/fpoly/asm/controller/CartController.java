@@ -1,6 +1,7 @@
 package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.CartRequest;
+import com.fpoly.asm.controller.response.ApiResponse;
 import com.fpoly.asm.controller.response.CartResponse;
 import com.fpoly.asm.entity.Cart;
 import com.fpoly.asm.mapper.CartMapper;
@@ -28,37 +29,37 @@ public class CartController {
 
     @Operation(summary = "Get Cart", description = "Retrieve cart for a user")
     @GetMapping("/{userId}")
-    public ResponseEntity<CartResponse> getCart(@PathVariable Integer userId) {
+    public ResponseEntity<ApiResponse<CartResponse>> getCart(@PathVariable Integer userId) {
         log.info("get cart for user {}", userId);
 
         Cart cart = cartService.getByUserId(userId);
-        return ResponseEntity.ok(cartMapper.toCartResponse(cart));
+        return ResponseEntity.ok(ApiResponse.success(cartMapper.toCartResponse(cart), "Cart retrieved successfully"));
     }
 
     @Operation(summary = "Add Item to Cart", description = "Add a product to the user's cart")
     @PostMapping("/add")
-    public ResponseEntity<CartResponse> addToCart(@Valid @RequestBody CartRequest request) {
+    public ResponseEntity<ApiResponse<CartResponse>> addToCart(@Valid @RequestBody CartRequest request) {
         log.info("add product {} to cart of user {}", request.getProductId(), request.getUserId());
 
         Cart cart = cartService.addToCart(request);
-        return ResponseEntity.ok(cartMapper.toCartResponse(cart));
+        return ResponseEntity.ok(ApiResponse.success(cartMapper.toCartResponse(cart), "Product added to cart successfully"));
     }
 
     @Operation(summary = "Remove Item from Cart", description = "Remove a product from the user's cart")
     @DeleteMapping("/remove/{userId}/{productId}")
-    public ResponseEntity<Void> removeFromCart(@PathVariable Integer userId, @PathVariable Integer productId) {
+    public ResponseEntity<ApiResponse<Void>> removeFromCart(@PathVariable Integer userId, @PathVariable Integer productId) {
         log.info("remove product {} from cart of user {}", productId, userId);
 
         cartService.removeFromCart(userId, productId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Product removed from cart successfully"));
     }
 
     @Operation(summary = "Clear Cart", description = "Remove all products from the user's cart")
     @DeleteMapping("/clear/{userId}")
-    public ResponseEntity<Void> clearCart(@PathVariable Integer userId) {
+    public ResponseEntity<ApiResponse<Void>> clearCart(@PathVariable Integer userId) {
         log.info("clear cart for user {}", userId);
 
         cartService.clearCart(userId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Cart cleared successfully"));
     }
 }

@@ -1,7 +1,9 @@
 package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.OrderRequest;
+import com.fpoly.asm.controller.response.ApiResponse;
 import com.fpoly.asm.controller.response.OrderResponse;
+import com.fpoly.asm.controller.response.PageResponse;
 import com.fpoly.asm.entity.Order;
 import com.fpoly.asm.mapper.OrderMapper;
 import com.fpoly.asm.service.OrderService;
@@ -28,7 +30,7 @@ public class OrderController {
 
     @Operation(summary = "Get Order List", description = "API retrieve order from database")
     @GetMapping
-    public ResponseEntity<Page<OrderResponse>> getAllOrder(
+    public ResponseEntity<ApiResponse<PageResponse<OrderResponse>>> getAllOrder(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "1") int page,
@@ -37,45 +39,45 @@ public class OrderController {
 
         Page<Order> order = orderService.getAll(keyword, sort, page, size);
         Page<OrderResponse> response = order.map(orderMapper::toOrderResponse);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(response), "Order list retrieved successfully"));
     }
 
     @Operation(summary = "Get Order Detail", description = "API retrieve order detail by ID from database")
     @GetMapping("/{id}")
-    public ResponseEntity<OrderResponse> getOrder(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<OrderResponse>> getOrder(@PathVariable Integer id) {
         log.info("get order");
 
         Order order = orderService.getById(id);
-        return ResponseEntity.ok(orderMapper.toOrderResponse(order));
+        return ResponseEntity.ok(ApiResponse.success(orderMapper.toOrderResponse(order), "Order retrieved successfully"));
     }
 
     @Operation(summary = "Create Order", description = "API add new order to database")
     @PostMapping
-    public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest request) {
+    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@Valid @RequestBody OrderRequest request) {
         log.info("create order");
 
         Order order = orderMapper.toOrder(request);
         Order savedOrder = orderService.save(order);
-        return ResponseEntity.ok(orderMapper.toOrderResponse(savedOrder));
+        return ResponseEntity.ok(ApiResponse.success(orderMapper.toOrderResponse(savedOrder), "Order created successfully"));
     }
 
-    @Operation(summary = "Update Order", description = "API update order to database")
+    @Operation(summary = "Update Order", description = "API update order in database")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateOrder(@PathVariable Integer id, @RequestBody OrderRequest request) {
+    public ResponseEntity<ApiResponse<Void>> updateOrder(@PathVariable Integer id, @RequestBody OrderRequest request) {
         log.info("update order");
 
         Order order = orderService.getById(id);
         orderMapper.updateOrder(order, request);
         orderService.save(order);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Order updated successfully"));
     }
 
-    @Operation(summary = "Delete Order", description = "API delete order to database")
+    @Operation(summary = "Delete Order", description = "API delete order from database")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrder(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Integer id) {
         log.info("delete order");
 
         orderService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Order deleted successfully"));
     }
 }

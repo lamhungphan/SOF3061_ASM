@@ -1,5 +1,6 @@
 package com.fpoly.asm.controller.response;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public abstract class PageResponseAbstract implements Serializable {
     public int pageNumber;
     public int pageSize;

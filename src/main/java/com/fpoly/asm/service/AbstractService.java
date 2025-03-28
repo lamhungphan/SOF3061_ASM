@@ -54,4 +54,3 @@ public abstract class AbstractService<T, ID, RQ> implements BaseService<T, ID, R
         repository.deleteById(id);
     }
 }
-

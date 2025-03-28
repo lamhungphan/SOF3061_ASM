@@ -2,6 +2,8 @@ package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.AccountRequest;
 import com.fpoly.asm.controller.response.AccountResponse;
+import com.fpoly.asm.controller.response.ApiResponse;
+import com.fpoly.asm.controller.response.PageResponse;
 import com.fpoly.asm.entity.Account;
 import com.fpoly.asm.mapper.AccountMapper;
 import com.fpoly.asm.service.AccountService;
@@ -28,7 +30,7 @@ public class AccountController {
 
     @Operation(summary = "Get Account List", description = "API retrieve account from database")
     @GetMapping
-    public ResponseEntity<Page<AccountResponse>> getAllAccount(
+    public ResponseEntity<ApiResponse<PageResponse<AccountResponse>>> getAllAccount(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "1") int page,
@@ -37,45 +39,45 @@ public class AccountController {
 
         Page<Account> account = accountService.getAll(keyword, sort, page, size);
         Page<AccountResponse> response = account.map(accountMapper::toAccountResponse);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(response),"Account list retrieved successfully"));
     }
 
     @Operation(summary = "Get Account Detail", description = "API retrieve account detail by ID from database")
     @GetMapping("/{id}")
-    public ResponseEntity<AccountResponse> getAccount(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<AccountResponse>> getAccount(@PathVariable Integer id) {
         log.info("get account");
 
         Account account = accountService.getById(id);
-        return ResponseEntity.ok(accountMapper.toAccountResponse(account));
+        return ResponseEntity.ok(ApiResponse.success(accountMapper.toAccountResponse(account), "Account retrieved successfully"));
     }
 
     @Operation(summary = "Create Account", description = "API add new account to database")
     @PostMapping
-    public ResponseEntity<AccountResponse> createAccount(@Valid @RequestBody AccountRequest request) {
+    public ResponseEntity<ApiResponse<AccountResponse>> createAccount(@Valid @RequestBody AccountRequest request) {
         log.info("create account");
 
         Account account = accountMapper.toAccount(request);
-        Account savedaccount = accountService.save(account);
-        return ResponseEntity.ok(accountMapper.toAccountResponse(savedaccount));
+        Account savedAccount = accountService.save(account);
+        return ResponseEntity.ok(ApiResponse.success(accountMapper.toAccountResponse(savedAccount), "Account created successfully"));
     }
 
     @Operation(summary = "Update Account", description = "API update account to database")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateAccount(@PathVariable Integer id, @RequestBody AccountRequest request) {
+    public ResponseEntity<ApiResponse<Void>> updateAccount(@PathVariable Integer id, @RequestBody AccountRequest request) {
         log.info("update account");
 
         Account account = accountService.getById(id);
         accountMapper.updateAccount(account, request);
         accountService.save(account);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Account updated successfully"));
     }
 
     @Operation(summary = "Delete Account", description = "API delete account to database")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Void>> deleteAccount(@PathVariable Integer id) {
         log.info("delete account");
 
         accountService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Account deleted successfully"));
     }
 }

@@ -1,7 +1,9 @@
 package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.OrderDetailRequest;
+import com.fpoly.asm.controller.response.ApiResponse;
 import com.fpoly.asm.controller.response.OrderDetailResponse;
+import com.fpoly.asm.controller.response.PageResponse;
 import com.fpoly.asm.entity.OrderDetail;
 import com.fpoly.asm.mapper.OrderDetailMapper;
 import com.fpoly.asm.service.OrderDetailService;
@@ -28,7 +30,7 @@ public class OrderDetailController {
 
     @Operation(summary = "Get Order Detail List", description = "API retrieve order details from database")
     @GetMapping
-    public ResponseEntity<Page<OrderDetailResponse>> getAllOrderDetails(
+    public ResponseEntity<ApiResponse<PageResponse<OrderDetailResponse>>> getAllOrderDetails(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "1") int page,
@@ -37,43 +39,44 @@ public class OrderDetailController {
 
         Page<OrderDetail> orderDetails = orderDetailService.getAll(keyword, sort, page, size);
         Page<OrderDetailResponse> response = orderDetails.map(orderDetailMapper::toOrderDetailResponse);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(response),"Order-detail list retrieved successfully"));
     }
 
     @Operation(summary = "Get Order Detail", description = "API retrieve order detail by ID from database")
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDetailResponse> getOrderDetail(@PathVariable Integer id) {
-        log.info("get order detail");
+    public ResponseEntity<ApiResponse<OrderDetailResponse>> getOrderDetail(@PathVariable Integer id) {
+        log.info("Fetching order detail with ID: {}", id);
 
         OrderDetail orderDetail = orderDetailService.getById(id);
-        return ResponseEntity.ok(orderDetailMapper.toOrderDetailResponse(orderDetail));
+        return ResponseEntity.ok(ApiResponse.success(orderDetailMapper.toOrderDetailResponse(orderDetail), "Order detail retrieved successfully"));
     }
 
     @Operation(summary = "Create Order Detail", description = "API add new order detail to database")
     @PostMapping
-    public ResponseEntity<OrderDetailResponse> createOrderDetail(@Valid @RequestBody OrderDetailRequest request) {
-        log.info("create order detail");
+    public ResponseEntity<ApiResponse<OrderDetailResponse>> createOrderDetail(@Valid @RequestBody OrderDetailRequest request) {
+        log.info("Creating new order detail for order ID: {}, product ID: {}, quantity: {}",
+                request.getOrderId(), request.getProductId(), request.getQuantity());
 
         OrderDetail orderDetail = orderDetailMapper.toOrderDetail(request);
         OrderDetail savedOrderDetail = orderDetailService.save(orderDetail);
-        return ResponseEntity.ok(orderDetailMapper.toOrderDetailResponse(savedOrderDetail));
+        return ResponseEntity.ok(ApiResponse.success(orderDetailMapper.toOrderDetailResponse(savedOrderDetail), "Order detail created successfully"));
     }
 
     @Operation(summary = "Update Order Detail", description = "API update order detail in database")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateOrderDetail(@PathVariable Integer id, @RequestBody OrderDetailRequest request) {
-        log.info("update order detail");
+    public ResponseEntity<ApiResponse<Void>> updateOrderDetail(@PathVariable Integer id, @RequestBody OrderDetailRequest request) {
+        log.info("Updating order detail with ID: {}", id);
 
         orderDetailService.update(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Order detail updated successfully"));
     }
 
     @Operation(summary = "Delete Order Detail", description = "API delete order detail from database")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteOrderDetail(@PathVariable Integer id) {
-        log.info("delete order detail");
+    public ResponseEntity<ApiResponse<Void>> deleteOrderDetail(@PathVariable Integer id) {
+        log.info("Deleting order detail with ID: {}", id);
 
         orderDetailService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Order detail deleted successfully"));
     }
 }

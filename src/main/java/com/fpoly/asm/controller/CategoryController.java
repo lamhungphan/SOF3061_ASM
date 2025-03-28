@@ -1,7 +1,9 @@
 package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.CategoryRequest;
+import com.fpoly.asm.controller.response.ApiResponse;
 import com.fpoly.asm.controller.response.CategoryResponse;
+import com.fpoly.asm.controller.response.PageResponse;
 import com.fpoly.asm.entity.Category;
 import com.fpoly.asm.mapper.CategoryMapper;
 import com.fpoly.asm.service.CategoryService;
@@ -28,7 +30,7 @@ public class CategoryController {
 
     @Operation(summary = "Get category list", description = "API retrieve category from database")
     @GetMapping
-    public ResponseEntity<Page<CategoryResponse>> getAllCategories(
+    public ResponseEntity<ApiResponse<PageResponse<CategoryResponse>>> getAllCategories(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "1") int page,
@@ -37,45 +39,45 @@ public class CategoryController {
 
         Page<Category> categories = categoryService.getAll(keyword, sort, page, size);
         Page<CategoryResponse> response = categories.map(categoryMapper::toCategoryResponse);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(response), "Category list retrieved successfully"));
     }
 
     @Operation(summary = "Get category detail", description = "API retrieve category detail by ID from database")
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponse> getCategory(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable Integer id) {
         log.info("getCategory");
 
         Category category = categoryService.getById(id);
-        return ResponseEntity.ok(categoryMapper.toCategoryResponse(category));
+        return ResponseEntity.ok(ApiResponse.success(categoryMapper.toCategoryResponse(category), "Category retrieved successfully"));
     }
 
     @Operation(summary = "Create category", description = "API add new category to database")
     @PostMapping
-    public ResponseEntity<CategoryResponse> createCategory(@Valid @RequestBody CategoryRequest request) {
+    public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@Valid @RequestBody CategoryRequest request) {
         log.info("createCategory");
 
         Category category = categoryMapper.toCategory(request);
         Category savedCategory = categoryService.save(category);
-        return ResponseEntity.ok(categoryMapper.toCategoryResponse(savedCategory));
+        return ResponseEntity.ok(ApiResponse.success(categoryMapper.toCategoryResponse(savedCategory), "Category created successfully"));
     }
 
     @Operation(summary = "Update category", description = "API update category to database")
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCategory(@PathVariable Integer id, @RequestBody CategoryRequest request) {
+    public ResponseEntity<ApiResponse<Void>> updateCategory(@PathVariable Integer id, @RequestBody CategoryRequest request) {
         log.info("updateCategory");
 
         Category category = categoryService.getById(id);
         categoryMapper.updateCategory(category, request);
         categoryService.save(category);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Category updated successfully"));
     }
-    
-    @Operation(summary = "Delete category", description = "API delete category to database")
+
+    @Operation(summary = "Delete category", description = "API delete category from database")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Integer id) {
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Integer id) {
         log.info("deleteCategory");
 
         categoryService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success(null, "Category deleted successfully"));
     }
 }
