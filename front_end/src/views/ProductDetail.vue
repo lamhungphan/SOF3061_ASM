@@ -1,63 +1,65 @@
 <template>
-    <section class="product-detail py-5">
-      <div class="container">
-        <div v-if="product" class="row">
-          <div class="col-md-6">
-            <img :src="product.image" :alt="product.name" class="img-fluid rounded">
-          </div>
-          <div class="col-md-6">
-            <h2>{{ product.name }}</h2>
-            <p class="text-muted">Mã sản phẩm: {{ product.id }}</p>
-            <h4 class="text-danger">{{ formatPrice(product.price) }}₫</h4>
-            <p>{{ product.description }}</p>
-            <div class="d-flex">
-              <input type="number" v-model="quantity" min="1" class="form-control w-25 me-2">
-              <button @click="addToCart" class="btn btn-primary">Thêm vào giỏ hàng</button>
-            </div>
-            <RouterLink to="/cart" class="btn btn-outline-success mt-3">Xem giỏ hàng</RouterLink>
-          </div>
-        </div>
-        <div v-else class="text-center">
-          <p>Sản phẩm không tồn tại.</p>
-          <RouterLink to="/" class="btn btn-secondary">Quay lại trang chủ</RouterLink>
-        </div>
+  <div class="container">
+    <div v-if="product" class="row">
+      <div class="col-md-6">
+        <img :src="product.image" class="img-fluid product-image" :alt="product.name">
       </div>
-    </section>
-  </template>
-  
-  <script setup>
-  import { ref, computed, onMounted } from 'vue';
-  import { useRoute } from 'vue-router';
-  import { useCartStore } from '@/store/cartStore';
-  import { useProductStore } from '@/store/productStore';
-  
-  const route = useRoute();
-  const cartStore = useCartStore();
-  const productStore = useProductStore();
-  const product = ref(null);
-  const quantity = ref(1);
-  
-  onMounted(() => {
-    const productId = route.params.id;
-    product.value = productStore.getProductById(productId);
-  });
-  
-  const addToCart = () => {
-    if (product.value) {
-      cartStore.addToCart({ ...product.value, quantity: Number(quantity.value) });
-      alert(`Đã thêm ${quantity.value} sản phẩm vào giỏ hàng!`);
-    }
-  };
-  
-  const formatPrice = (price) => {
-    return price.toLocaleString('vi-VN');
-  };
-  </script>
-  
-  <style scoped>
-  .img-fluid {
-    max-height: 400px;
-    object-fit: cover;
-  }
-  </style>
-  
+      <div class="col-md-6">
+        <h2>{{ product.name }}</h2>
+        <p class="text-muted">
+          Ngày phát hành: {{ product.publishDate || "Chưa cập nhật" }}
+        </p>
+        <p class="text-danger h4">
+          {{ product.price ? formatPrice(product.price) : "Chưa cập nhật" }}₫
+        </p>
+        <p><strong>Mô tả:</strong> {{ product.description || "Không có mô tả" }}</p>
+        <p><strong>Kho:</strong> {{ product.quantity || "Không xác định" }} sản phẩm</p>
+        <button class="btn btn-primary" @click="addToCart(product.id)">Thêm vào giỏ hàng 🛒</button>
+      </div>
+    </div>
+    <div v-else>
+      <p class="text-center">Đang tải sản phẩm...</p>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { computed, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useProductStore } from '@/store/productStore';
+import { useCartStore } from '@/store/cartStore';
+
+const route = useRoute();
+const productStore = useProductStore();
+const cartStore = useCartStore();
+const product = computed(() => productStore.productDetail);
+
+const formatPrice = (price) => price.toLocaleString('vi-VN');
+
+onMounted(async () => {
+  await productStore.fetchProductById(route.params.id);
+});
+
+const addToCart = async (productId) => {
+  const userId = 1; // Tạm thời gán cứng, sau này thay bằng user đăng nhập
+  const quantity = 1; // Mặc định thêm 1 sản phẩm
+
+  await cartStore.addToCart(userId, productId, quantity);
+};
+</script>
+
+<style scoped>
+.product-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+.container {
+  padding-top: 20px;
+}
+
+h2 {
+  color: #333;
+}
+</style>

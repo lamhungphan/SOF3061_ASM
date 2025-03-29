@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Category Controller")
 @Slf4j(topic = "CATEGORY-CONTROLLER")
 @Validated
+@CrossOrigin(origins = "http://localhost:5173")
 public class CategoryController {
     private final CategoryService categoryService;
     private final CategoryMapper categoryMapper;

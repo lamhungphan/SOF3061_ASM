@@ -18,11 +18,12 @@
 </template>
 
 <script setup>
+import { computed, onMounted } from 'vue';
 import { useProductStore } from '@/store/productStore';
 import { useRouter } from 'vue-router';
 
 const productStore = useProductStore();
-const products = productStore.products;
+const products = computed(() => productStore.products);
 const router = useRouter();
 
 const formatPrice = (price) => price.toLocaleString('vi-VN');
@@ -30,6 +31,10 @@ const formatPrice = (price) => price.toLocaleString('vi-VN');
 const goToProduct = (id) => {
   router.push(`/product/${id}`);
 };
+
+onMounted(() => {
+  productStore.fetchProducts();
+});
 </script>
 
 <style scoped>
@@ -48,7 +53,7 @@ const goToProduct = (id) => {
   justify-content: center;
   align-items: center;
   height: 250px;
-  background-color: #f8f9fa; /* Màu nền nhẹ để nổi bật hình ảnh */
+  background-color: #f8f9fa;
 }
 
 .card-img-top {

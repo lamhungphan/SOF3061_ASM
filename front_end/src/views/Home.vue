@@ -1,15 +1,17 @@
 <template>
-  <Carousel />
-  <ProductCategory />
-  <ProductList :products="products" v-if="products.length > 0" />
-  <p v-else class="text-center text-danger">Không có sản phẩm nào</p>
+  <div>
+    <Carousel />
+    <ProductCategory />
+    <ProductList :products="products" v-if="products.length > 0" />
+    <p v-else class="text-center text-danger">Không có sản phẩm nào</p>
+  </div>
 </template>
 
 <script setup>
 import { computed, onMounted } from 'vue';
 import { useProductStore } from '@/store/productStore';
 import Carousel from '@/components/CarouselComponent.vue';
-import ProductCategory from '@/components/ProductCategory.vue';
+import ProductCategory from '@/components/CategoryList.vue';
 import ProductList from '@/components/ProductList.vue';
 
 const productStore = useProductStore();
