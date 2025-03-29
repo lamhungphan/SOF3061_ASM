@@ -19,19 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-//    private final AuthenticationService authenticationService;
-//
-//    @Operation(summary = "Access token", description = "Get access token and refresh token by username and password")
-//    @PostMapping("/access-token")
-//    public TokenResponse accessToken(@RequestBody SignInRequest request) {
-//        log.info("Access token request");
-//        return authenticationService.getAccessToken(request);
-//    }
-//
-//    @Operation(summary = "Refresh token", description = "Get access token by refresh token")
-//    @PostMapping("/refresh-token")
-//    public TokenResponse refreshToken(@RequestBody String refreshToken) {
-//        log.info("Refresh token request");
-//        return authenticationService.getRefreshToken(refreshToken);
-//    }
+    private final AuthenticationService authenticationService;
+
+    @Operation(summary = "Access token", description = "Get access token and refresh token by username and password")
+    @PostMapping("/access-token")
+    public TokenResponse accessToken(@RequestBody SignInRequest request) {
+        log.info("Access token request");
+        return authenticationService.getAccessToken(request);
+    }
+
+    @Operation(summary = "Refresh token", description = "Get access token by refresh token")
+    @PostMapping("/refresh-token")
+    public TokenResponse refreshToken(@RequestBody String refreshToken) {
+        log.info("Refresh token request");
+        return authenticationService.getRefreshToken(refreshToken);
+    }
 }

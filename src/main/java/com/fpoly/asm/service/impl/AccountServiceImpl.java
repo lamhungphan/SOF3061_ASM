@@ -20,8 +20,11 @@ public class AccountServiceImpl extends AbstractService<Account, Integer, Accoun
 
     @Override
     public Account findByUsername(String username) {
-        return accountRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Account not found with username: " + username));
+        Account account = accountRepository.findByUsername(username);
+        if (account == null) {
+            throw new ResourceNotFoundException("Account not found with username: " + username);
+        }
+        return account;
     }
 
     @Override

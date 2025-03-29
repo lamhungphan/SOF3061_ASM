@@ -3,6 +3,8 @@ package com.fpoly.asm.service.impl;
 import com.fpoly.asm.controller.request.SignInRequest;
 import com.fpoly.asm.controller.response.TokenResponse;
 import com.fpoly.asm.entity.Account;
+import com.fpoly.asm.exception.ForBiddenException;
+import com.fpoly.asm.exception.InvalidDataException;
 import com.fpoly.asm.repository.AccountRepository;
 import com.fpoly.asm.service.AuthenticationService;
 import com.fpoly.asm.service.JwtService;
@@ -19,12 +21,73 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.fpoly.asm.common.TokenType.REFRESH_TOKEN;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j(topic = "AUTHENTICATION-SERVICE")
-public class AuthenticationServiceImpl  {
+public class AuthenticationServiceImpl implements AuthenticationService {
 
-    
+    private final AccountRepository accountRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+
+    @Override
+    public TokenResponse getAccessToken(SignInRequest request) {
+        log.info("Get access token");
+
+        List<String> authorities = new ArrayList<>();
+        try {
+            // Thực hiện xác thực với username và password
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+            log.info("isAuthenticated = {}", authenticate.isAuthenticated());
+            log.info("Authorities: {}", authenticate.getAuthorities().toString());
+            authorities.add(authenticate.getAuthorities().toString());
+
+            // Nếu xác thực thành công, lưu thông tin vào SecurityContext
+            SecurityContextHolder.getContext().setAuthentication(authenticate);
+        } catch (BadCredentialsException | DisabledException e) {
+            log.error("Login fail, message={}", e.getMessage());
+            throw new AccessDeniedException(e.getMessage());
+        }
+
+        String accessToken = jwtService.generateAccessToken(request.getUsername(), authorities);
+        String refreshToken = jwtService.generateRefreshToken(request.getUsername(), authorities);
+
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    @Override
+    public TokenResponse getRefreshToken(String request) {
+        log.info("Get refresh token");
+
+        if (!StringUtils.hasLength(request)) {
+            throw new InvalidDataException("Token must be not blank");
+        }
+
+        try {
+            // Verify token
+            String userName = jwtService.extractUsername(request, REFRESH_TOKEN);
+
+            // check user is active or inactivated
+            Account user = accountRepository.findByUsername(userName);
+            List<String> authorities = new ArrayList<>();
+            user.getAuthorities().forEach(authority -> authorities.add(authority.getAuthority()));
+
+            // generate new access token
+            String accessToken = jwtService.generateAccessToken(user.getUsername(), authorities);
+
+            return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
+        } catch (Exception e) {
+            log.error("Access denied! errorMessage: {}", e.getMessage());
+            throw new ForBiddenException(e.getMessage());
+        }
+    }
 }

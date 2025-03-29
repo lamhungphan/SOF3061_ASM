@@ -18,6 +18,6 @@ openapi:
 
 jwt:
   expiryMinutes: ${JWT_EXPIRY_MINUTES:60}
-  expDay: ${JWT_EXPIRY_DAY:14}
-  accessKey: ${JWT_ACCESS_KEY:fZi+LQ66QcqyfMdL6PJRDRhsrkoDdXCVLdDtQnL9hQk=}
-  refreshKey: ${JWT_REFRESH_KEY:+gdG3celaz2lnbhW+T9u6ftzKJVbdSFrlcq56hVawNw=}
+  expiryDay: ${JWT_EXPIRY_DAY:14}
+  accessKey: ${JWT_ACCESS_KEY:wt3maMbhx1MwV4nyNda+NxDSQILdExUGYNqakLxsfyu2NwuIq9JIqflcsB9D8dFnMoob9X3rrZqhPzDRTh8xsg==}
+  refreshKey: ${JWT_REFRESH_KEY:fZIze6bO7T/YQEz4DdVdRCPt0NxpSAPeG0CU4pmPitPjA8541PUiQQnmPEvqiPesfuV0nYuyUXD+JQ3O7gYukcg==}

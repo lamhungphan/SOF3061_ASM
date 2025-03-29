@@ -5,9 +5,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
-public record UserServiceDetail(AccountRepository userRepository) { // java 17
+public record UserServiceDetail(AccountRepository accountRepository) {
 
-//    public UserDetailsService getUserDetailsService() {
-//        return userRepository::findByUsername;
-//    }
+    public UserDetailsService getAccountDetailsService() {
+        return accountRepository::findByUsername;
+    }
 }
