@@ -74,12 +74,12 @@
               aria-labelledby="accountDropdown"
             >
               <li>
-                <a class="dropdown-item" href="#" @click.prevent="showLogin"
+                <a class="dropdown-item" href="/login" @click.prevent="showLogin"
                   >Đăng nhập</a
                 >
               </li>
               <li>
-                <a class="dropdown-item" href="#" @click.prevent="showRegister"
+                <a class="dropdown-item" href="/register" @click.prevent="showRegister"
                   >Đăng ký</a
                 >
               </li>
@@ -94,7 +94,9 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
 import { useCartStore } from "@/store/cartStore";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const cartStore = useCartStore();
 const userId = 2; // User giả định, sau này lấy từ auth
 
@@ -119,13 +121,11 @@ const clearCart = async () => {
 };
 
 const showLogin = () => {
-  console.log("Show login modal");
-  // Logic hiển thị modal đăng nhập
+  router.push("/login");
 };
 
 const showRegister = () => {
-  console.log("Show register modal");
-  // Logic hiển thị modal đăng ký
+  router.push("/register");
 };
 </script>
 
@@ -160,6 +160,6 @@ const showRegister = () => {
 }
 
 .dropdown-menu {
-  width: 250px;
+  width: 150px;
 }
 </style>

@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <HeaderComponent />
   <div class="container">
     <div v-if="product" class="row">
       <div class="col-md-6">
@@ -21,9 +23,11 @@
       <p class="text-center">Đang tải sản phẩm...</p>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>
+import HeaderComponent from "@/components/HeaderComponent.vue";
 import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProductStore } from '@/store/productStore';
