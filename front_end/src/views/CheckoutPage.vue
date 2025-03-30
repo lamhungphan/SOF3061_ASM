@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <HeaderComponent />
     <div class="container mt-5">
       <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -52,9 +54,11 @@
         </div>
       </div>
     </div>
+  </div>
   </template>
   
   <script setup>
+  import HeaderComponent from "@/components/HeaderComponent.vue";
   import { ref } from "vue";
   import { useCartStore } from "@/store/cartStore";
   import CartItem from "@/components/CartItem.vue";
@@ -86,10 +90,6 @@
   .card {
     border-radius: 12px;
     transition: all 0.3s ease-in-out;
-  }
-  
-  .card:hover {
-    transform: translateY(-5px);
   }
   
   .form-control, .form-select {

@@ -20,29 +20,20 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarScroll">
-        <ul
-          class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll"
-          style="--bs-scroll-height: 100px"
-        >
+        <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/"
+            <RouterLink class="nav-link active" to="/"
               >Samsung Galaxy</RouterLink
             >
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/"
-              >Galaxy Tab</RouterLink
-            >
+            <RouterLink class="nav-link active" to="/">Galaxy Tab</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/"
-              >Galaxy Watch</RouterLink
-            >
+            <RouterLink class="nav-link active" to="/">Galaxy Watch</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link active" aria-current="page" to="/"
-              >Phụ kiện</RouterLink
-            >
+            <RouterLink class="nav-link active" to="/">Phụ kiện</RouterLink>
           </li>
         </ul>
         <form class="d-flex" role="search">
@@ -55,60 +46,46 @@
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
 
+        <ul class="navbar-nav ms-2">
         <!-- Giỏ hàng -->
-        <li class="nav-item dropdown dropdown-container">
-          <a class="nav-link dropdown-toggle" href="#">
-            <i class="fa-solid fa-cart-shopping nav-icon"></i>
-            <span v-if="cartQuantity > 0" class="badge">{{
-              cartQuantity
-            }}</span>
-          </a>
-          <div class="dropdown-content">
-            <div v-if="cart.length === 0" class="text-center p-2">
-              Giỏ hàng trống
-            </div>
-            <div v-else>
-              <ul class="list-group">
-                <li
-                  v-for="item in cart"
-                  :key="item.productId"
-                  class="list-group-item d-flex justify-content-between align-items-center"
-                >
-                  {{ item.productId }} Số lượng: {{ item.quantity }}
-                  <button
-                    class="btn btn-sm btn-danger"
-                    @click="removeItem(item.productId)"
-                  >
-                    Xóa
-                  </button>
-                </li>
-              </ul>
-              <div class="text-center p-2">
-                <strong>Tổng: {{ formatPrice(totalPrice) }} ₫</strong>
-                <button class="btn btn-primary btn-sm mt-2" @click="clearCart">
-                  Xóa toàn bộ
-                </button>
-              </div>
-            </div>
-          </div>
-        </li>
+          <li class="nav-item">
+            <RouterLink to="/cart" class="nav-link position-relative">
+              <i class="bi bi-cart nav-icon"></i>
+              <span v-if="cartQuantity > 0" class="badge bg-danger">
+                {{ cartQuantity }}
+              </span>
+            </RouterLink>
+          </li>
 
-        <!-- Tài khoản -->
-        <li class="nav-item dropdown dropdown-container">
-          <a class="nav-link dropdown-toggle" href="#">
-            <i class="fa-solid fa-user nav-icon"></i>
-          </a>
-          <ul class="dropdown-content">
-            <li>
-              <a class="dropdown-item" href="#" @click="showLogin">Đăng nhập</a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="#" @click="showRegister"
-                >Đăng ký</a
-              >
-            </li>
-          </ul>
-        </li>
+          <!-- Tài khoản -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="accountDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <i class="bi bi-person nav-icon"></i>
+            </a>
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="accountDropdown"
+            >
+              <li>
+                <a class="dropdown-item" href="#" @click.prevent="showLogin"
+                  >Đăng nhập</a
+                >
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" @click.prevent="showRegister"
+                  >Đăng ký</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -118,7 +95,6 @@
 import { ref, computed, onMounted } from "vue";
 import { useCartStore } from "@/store/cartStore";
 
-const showCart = ref(false);
 const cartStore = useCartStore();
 const userId = 2; // User giả định, sau này lấy từ auth
 
@@ -141,6 +117,16 @@ const removeItem = async (productId) => {
 const clearCart = async () => {
   await cartStore.clearCart(userId);
 };
+
+const showLogin = () => {
+  console.log("Show login modal");
+  // Logic hiển thị modal đăng nhập
+};
+
+const showRegister = () => {
+  console.log("Show register modal");
+  // Logic hiển thị modal đăng ký
+};
 </script>
 
 <style scoped>
@@ -148,21 +134,17 @@ const clearCart = async () => {
   background-color: #1d1d1f;
 }
 
-.navbar-nav .nav-link {
+.nav-link {
   color: white !important;
-  transition: color 0.3s ease;
 }
 
-.navbar-nav .nav-link:hover {
+.nav-link:hover {
   color: #f8c146 !important;
 }
 
 .nav-icon {
   font-size: 1.3rem;
-  margin-left: 15px;
-  cursor: pointer;
-  color: white !important;
-  transition: color 0.3s ease;
+  color: white;
 }
 
 .nav-icon:hover {
@@ -171,53 +153,13 @@ const clearCart = async () => {
 
 .badge {
   position: absolute;
-  top: -5px;
-  right: 5px;
-  background: red;
-  color: white;
-  font-size: 12px;
-  border-radius: 50%;
-  padding: 3px 7px;
-}
-
-.dropdown-container {
-  position: relative;
-}
-
-.dropdown-content {
-  position: absolute;
+  top: 0;
   right: 0;
-  background: white;
-  border: 1px solid #ccc;
+  font-size: 12px;
+  padding: 3px 6px;
+}
+
+.dropdown-menu {
   width: 250px;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.dropdown-container:hover .dropdown-content {
-  opacity: 1;
-  visibility: visible;
-}
-
-.navbar .dropdown-menu {
-  min-width: 150px;
-  background-color: white;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-}
-
-.nav-icon {
-  font-size: 1.3rem;
-  margin-left: 15px;
-  cursor: pointer;
-  color: white !important;
-  transition: color 0.3s ease;
-}
-
-.nav-icon:hover {
-  color: #f8c146;
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <div>
+     <HeaderComponent/>
     <Carousel />
     <ProductCategory />
     <ProductList :products="products" v-if="products.length > 0" />
@@ -13,6 +14,9 @@ import { useProductStore } from '@/store/productStore';
 import Carousel from '@/components/CarouselComponent.vue';
 import ProductCategory from '@/components/CategoryList.vue';
 import ProductList from '@/components/ProductList.vue';
+import HeaderComponent from '@/components/HeaderComponent.vue'
+import FooterComponent from '@/components/FooterComponent.vue'
+import newNav from '@/components/newNav.vue'
 
 const productStore = useProductStore();
 const products = computed(() => productStore.products);

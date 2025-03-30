@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.*;
 import java.util.function.Function;
@@ -81,7 +82,8 @@ public class JwtServiceImpl implements JwtService {
 
     private Key getKey(TokenType type) {
         String secret = (type == TokenType.ACCESS_TOKEN) ? accessKey : refreshKey;
-        byte[] keyBytes = Base64.getDecoder().decode(secret);
+//        byte[] keyBytes = Base64.getUrlDecoder().decode(secret); // URL-SAFE DECODER
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
