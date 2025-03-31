@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
+import axiosInstance from "@/axios/axios"; 
+
+const SUPABASE_URL = "https://wdkyyamhfjpwjcysnemg.supabase.co";
+const BUCKET_NAME = "uploads";
 
 export const useProductStore = defineStore('product', () => {
   const products = ref([]);
@@ -7,29 +11,38 @@ export const useProductStore = defineStore('product', () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:8080/products');
-      const data = await response.json();
-      products.value = data.data.content.map(product => ({
+      const response = await axiosInstance.get(`/products`);
+      const productList = response.data?.data?.content || [];
+      products.value = productList.map(product => ({
         ...product,
-        image: product.image ? `http://localhost:8080/images/${product.image}` : 'https://via.placeholder.com/200',
-        publishDate: product.publishDate ? product.publishDate : "Chưa cập nhật"
+        image: product.image ? `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${product.image}` : 'no img',
+        publishDate: product.publishDate || "Chưa cập nhật"
       }));
     } catch (error) {
-      console.error('Lỗi khi tải danh sách sản phẩm:', error);
+      console.error('Lỗi khi tải danh sách sản phẩm:', error.response?.data || error.message);
     }
   };
 
+
   const fetchProductById = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/products/${id}`);
-      const data = await response.json();
-      productDetail.value = {
-        ...data,
-        image: data.image ? `http://localhost:8080/images/${data.image}` : 'https://via.placeholder.com/200',
-        publishDate: data.publishDate ? data.publishDate : "Chưa cập nhật"
-      };
+      const response = await axiosInstance.get(`/products/${id}`);
+      const productData = response.data?.data;
+
+      if (productData) {
+        console.log("Product data received:", productData); // Kiểm tra dữ liệu API
+        productDetail.value = {
+          ...productData,
+          image: productData.image
+            ? `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${productData.image}`
+            : "no img",
+          publishDate: productData.publishDate || "Chưa cập nhật",
+        };
+      } else {
+        console.error("Không tìm thấy sản phẩm:", productData);
+      }
     } catch (error) {
-      console.error('Lỗi khi tải sản phẩm:', error);
+      console.error(`Lỗi khi tải sản phẩm có ID ${id}:`, error.response?.data || error.message);
     }
   };
 

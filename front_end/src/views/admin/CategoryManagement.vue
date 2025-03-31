@@ -1,4 +1,5 @@
 <template>
+  <div>
   <h3>Quản Lý Danh Mục</h3>
   
   <div v-if="message" :class="`alert alert-${messageType}`" role="alert">
@@ -29,13 +30,14 @@
       </button>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { useCategories } from "@/stores/CategoryStore";
-import CategoryForm from "@/components/category/CategoryForm.vue";
-import CategoryList from "@/components/category/CategoryList.vue";
+import { useCategories } from "@/store/admin/CategoryStore";
+import CategoryForm from "@/components/admin/category/CategoryForm.vue";
+import CategoryList from "@/components/admin/category/CategoryList.vue";
 const categoryStore = useCategories();
 
 const searchQuery = ref("");

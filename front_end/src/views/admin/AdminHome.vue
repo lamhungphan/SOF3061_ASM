@@ -48,13 +48,13 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { useLoginStore } from "@/stores/LoginStore";
-import Dashboard from '@/views/Dashboard.vue';
-import Order from '@/views/Order.vue';
-import UserManagement from '@/views/UserManagement.vue';
-import ProductManagement from '@/views/ProductManagement.vue';
+import { useLoginStore } from "@/store/LoginStore";
+import Dashboard from '@/views/admin/Dashboard.vue';
+import Order from '@/views/admin/Order.vue';
+import UserManagement from '@/views/admin/UserManagement.vue';
+import ProductManagement from '@/views/admin/ProductManagement.vue';
 import {onMounted} from "vue";
-import CategoryManagement from "@/views/CategoryManagement.vue";
+import CategoryManagement from "@/views/admin/CategoryManagement.vue";
 
 const router = useRouter();
 const loginStore = useLoginStore();

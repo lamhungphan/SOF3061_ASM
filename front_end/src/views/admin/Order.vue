@@ -21,9 +21,9 @@
   
   <script setup>
 import { onMounted, ref } from "vue";
-import OrderForm from "../components/order/OrderForm.vue";
-import OrderList from "../components/order/OrderList.vue";
-import { useOrders } from "../stores/OrderStore";
+import OrderForm from "@/components/admin/order/OrderForm.vue";
+import OrderList from "@/components/admin/order/OrderList.vue";
+import { useOrders } from "@/store/admin/OrderStore";
 
 const ordersStore = useOrders();
 const orders = ref([]);

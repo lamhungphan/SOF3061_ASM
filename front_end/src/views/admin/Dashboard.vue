@@ -1,4 +1,5 @@
 <template>
+  <div>
   <h3 class="mb-4">Dashboard Bán Hàng</h3>
   <div class="row">
     <div v-for="(item, index) in dashboardData" :key="index" class="col-12 col-sm-6 col-md-3">
@@ -14,13 +15,14 @@
       <Chart :label="label" :data="data" :revenueByCategory="revenueByCategory" :topVipCustomers="topVipCustomers"></Chart>
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import Chart from "../components/chart/Chart.vue";
-import axios from "../axios/axios"; // Import axios instance
+import Chart from "@/components/admin/chart/Chart.vue";
+import axios from "@/axios/axios"; // Import axios instance
 
 const dashboardData = ref();
 const router = useRouter();
@@ -35,11 +37,11 @@ const fetchDashboardData = async () => {
     dashboardData.value = response.data;
 
     // Gọi API thống kê doanh thu theo loại hàng
-    const revenueResponse = await axios.get("/store/admin/revenue-by-category");
+    const revenueResponse = await axios.get("/admin/revenue-by-category");
     revenueByCategory.value = revenueResponse.data;
 
     // Gọi API danh sách 10 khách hàng VIP
-    const vipResponse = await axios.get("/store/admin/top-vip-customers");
+    const vipResponse = await axios.get("/admin/top-vip-customers");
     topVipCustomers.value = vipResponse.data;
 
     label.value = response.data;

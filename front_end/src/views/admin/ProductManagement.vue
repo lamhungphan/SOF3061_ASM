@@ -1,4 +1,5 @@
 <template>
+  <div>
   <h3 class="">Quản Lý Hàng Hóa</h3>
   <div v-if="message" :class="`alert alert-${messageType}`" role="alert">
     {{ message }}
@@ -26,13 +27,14 @@
       </button>
     </div>
   </div>
+</div>
 </template>
 <script setup>
-import ProductForm from '@/components/product/ProductForm.vue';
-import ProductList from '@/components/product/ProductList.vue';
+import ProductForm from '@/components/admin/product/ProductForm.vue';
+import ProductList from '@/components/admin/product/ProductList.vue';
 import { computed, onMounted, ref } from 'vue';
-import { useCategories } from '@/stores/CategoryStore';
-import { useProducts } from '@/stores/ProductStore';
+import { useCategories } from '@/store/admin/CategoryStore';
+import { useProducts } from '@/store/admin/ProductStore';
 
 const categoryStore = useCategories();
 

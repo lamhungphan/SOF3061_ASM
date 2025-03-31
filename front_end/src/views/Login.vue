@@ -1,34 +1,22 @@
 <script setup>
-import { ref } from "vue";
+import { useLoginStore } from "@/store/LoginStore";
 import { useRouter } from "vue-router";
 
+const store = useLoginStore();
 const router = useRouter();
-const username = ref("");
-const password = ref("");
-const errorMessage = ref("");
 
-// async function login() {
-//   errorMessage.value = "";
-//   try {
-//     const response = await fetch("http://localhost:8080/auth/access-token", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ username: username.value, password: password.value }),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error("Đăng nhập thất bại");
-//     }
-
-//     const data = await response.json();
-//     localStorage.setItem("accessToken", data.accessToken);
-//     localStorage.setItem("refreshToken", data.refreshToken);
-
-//     router.push("/");
-//   } catch (error) {
-//     errorMessage.value = error.message;
-//   }
-// }
+async function login() {
+  const success = await store.login(username.value, password.value);
+  if (success) {
+    if (store.role === "user") {
+      router.push("/");
+    } else if (store.role === "manager" || store.role === "director") {
+      router.push("/admin");
+    }
+  } else {
+    errorMessage.value = store.error;
+  }
+}
 </script>
 
 <template>
@@ -36,7 +24,12 @@ const errorMessage = ref("");
     <h2>Đăng nhập</h2>
     <form @submit.prevent="login">
       <input v-model="username" type="text" placeholder="Username" required />
-      <input v-model="password" type="password" placeholder="Password" required />
+      <input
+        v-model="password"
+        type="password"
+        placeholder="Password"
+        required
+      />
       <button type="submit">Đăng nhập</button>
     </form>
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>

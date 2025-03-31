@@ -11,9 +11,7 @@
         <p class="text-muted">
           Ngày phát hành: {{ product.publishDate || "Chưa cập nhật" }}
         </p>
-        <p class="text-danger h4">
-          {{ product.price ? formatPrice(product.price) : "Chưa cập nhật" }}₫
-        </p>
+        <p class="text-danger h4">{{ formattedPrice }}</p>
         <p><strong>Mô tả:</strong> {{ product.description || "Không có mô tả" }}</p>
         <p><strong>Kho:</strong> {{ product.quantity || "Không xác định" }} sản phẩm</p>
         <button class="btn btn-primary" @click="addToCart(product.id)">Thêm vào giỏ hàng 🛒</button>
@@ -36,9 +34,12 @@ import { useCartStore } from '@/store/cartStore';
 const route = useRoute();
 const productStore = useProductStore();
 const cartStore = useCartStore();
-const product = computed(() => productStore.productDetail);
 
-const formatPrice = (price) => price.toLocaleString('vi-VN');
+const product = computed(() => productStore.productDetail || {});
+
+const formattedPrice = computed(() => 
+  product.value?.price ? product.value.price.toLocaleString('vi-VN') + "₫" : "Chưa cập nhật"
+);
 
 onMounted(async () => {
   await productStore.fetchProductById(route.params.id);

@@ -1,4 +1,5 @@
 <template>
+  <div>
   <h3 class="text-center mb-4">Quản Lý Đăng Ký Người Dùng</h3>
   
   <!-- Component Form nhập thông tin người dùng -->
@@ -24,13 +25,14 @@
       Sau
     </button>
   </div>
+</div>
 </template>
 <script setup>
 import { ref, onMounted } from "vue";
-import { useUsers } from "@/stores/UserStore";
-import { useOrders } from "@/stores/OrderStore";
-import UserForm from "@/components/user/UserForm.vue";
-import UserList from "@/components/user/UserList.vue";
+import { useUsers } from "@/store/admin/UserStore";
+import { useOrders } from "@/store/admin/OrderStore";
+import UserForm from "@/components/admin/user/UserForm.vue";
+import UserList from "@/components/admin/user/UserList.vue";
 
 const userStore = useUsers();
 const orderStore = useOrders();
