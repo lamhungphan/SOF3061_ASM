@@ -6,6 +6,7 @@ import CheckoutPage from "@/views/CheckoutPage.vue";
 import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import AdminHome from '@/views/admin/AdminHome.vue';
+import { useLoginStore } from "@/store/LoginStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,16 +24,11 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const role = localStorage.getItem("role");
-  
-  if (to.meta.requiresAuth && !role) {
-      next("/login");
-  } else if (to.meta.requiresAdmin && (role !== "manager" && role !== "director")) {
-      next("/");
-  } else if (to.meta.requiresDirector && role !== "director") {
-      next("/admin"); 
+  const loginStore = useLoginStore();
+  if (to.meta.requiresAdmin && (!loginStore.isAuthenticated || !loginStore.isAdmin)) {
+    next("/login");
   } else {
-      next();
+    next();
   }
 });
 

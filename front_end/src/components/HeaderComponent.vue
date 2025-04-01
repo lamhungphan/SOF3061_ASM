@@ -22,9 +22,7 @@
       <div class="collapse navbar-collapse" id="navbarScroll">
         <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
           <li class="nav-item">
-            <RouterLink class="nav-link active" to="/"
-              >Samsung Galaxy</RouterLink
-            >
+            <RouterLink class="nav-link active" to="/">Samsung Galaxy</RouterLink>
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link active" to="/">Galaxy Tab</RouterLink>
@@ -47,7 +45,7 @@
         </form>
 
         <ul class="navbar-nav ms-2">
-        <!-- Giỏ hàng -->
+          <!-- Giỏ hàng -->
           <li class="nav-item">
             <RouterLink to="/cart" class="nav-link position-relative">
               <i class="bi bi-cart nav-icon"></i>
@@ -68,21 +66,52 @@
               aria-expanded="false"
             >
               <i class="bi bi-person nav-icon"></i>
+              <span v-if="store.isAuthenticated">{{ store.user?.username }}</span>
             </a>
             <ul
               class="dropdown-menu dropdown-menu-end"
               aria-labelledby="accountDropdown"
             >
-              <li>
-                <a class="dropdown-item" href="/login" @click.prevent="showLogin"
-                  >Đăng nhập</a
-                >
-              </li>
-              <li>
-                <a class="dropdown-item" href="/register" @click.prevent="showRegister"
-                  >Đăng ký</a
-                >
-              </li>
+              <!-- Khi chưa đăng nhập -->
+              <template v-if="!store.isAuthenticated">
+                <li>
+                  <a class="dropdown-item" href="/login" @click.prevent="showLogin">
+                    Đăng nhập
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/register" @click.prevent="showRegister">
+                    Đăng ký
+                  </a>
+                </li>
+              </template>
+
+              <!-- Khi đã đăng nhập -->
+              <template v-else>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="/change-password"
+                    @click.prevent="router.push('/change-password')"
+                  >
+                    Đổi mật khẩu
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="/edit-profile"
+                    @click.prevent="router.push('/edit-profile')"
+                  >
+                    Sửa thông tin
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="#" @click.prevent="handleLogout">
+                    Đăng xuất
+                  </a>
+                </li>
+              </template>
             </ul>
           </li>
         </ul>
@@ -92,41 +121,37 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useCartStore } from "@/store/cartStore";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useCartStore } from "@/store/cartStore";
+import { useLoginStore } from "@/store/LoginStore";
 
 const router = useRouter();
 const cartStore = useCartStore();
-const userId = 2; // User giả định, sau này lấy từ auth
-
-onMounted(() => {
-  cartStore.fetchCart(userId);
-});
+const store = useLoginStore(); 
 
 const cart = computed(() => cartStore.cart);
 const cartQuantity = computed(() => cart.value.length);
-const totalPrice = computed(() =>
-  cart.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
-);
 
-const formatPrice = (price) => price.toLocaleString("vi-VN");
+onMounted(() => {
+  const userId = store.user?.id || null;
+  if (userId) {
+    cartStore.fetchCart(userId);
+  }
+});
 
-const removeItem = async (productId) => {
-  await cartStore.removeFromCart(userId, productId);
-};
-
-const clearCart = async () => {
-  await cartStore.clearCart(userId);
-};
-
-const showLogin = () => {
+function handleLogout() {
+  store.logout();
   router.push("/login");
-};
+}
 
-const showRegister = () => {
+function showLogin() {
+  router.push("/login");
+}
+
+function showRegister() {
   router.push("/register");
-};
+}
 </script>
 
 <style scoped>

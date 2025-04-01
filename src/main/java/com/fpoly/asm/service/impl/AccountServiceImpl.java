@@ -32,4 +32,3 @@ public class AccountServiceImpl extends AbstractService<Account, Integer, Accoun
 
     }
 }
-

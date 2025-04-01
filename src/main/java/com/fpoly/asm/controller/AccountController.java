@@ -1,9 +1,11 @@
 package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.AccountRequest;
+import com.fpoly.asm.controller.request.SignInRequest;
 import com.fpoly.asm.controller.response.AccountResponse;
 import com.fpoly.asm.controller.response.ApiResponse;
 import com.fpoly.asm.controller.response.PageResponse;
+import com.fpoly.asm.controller.response.TokenResponse;
 import com.fpoly.asm.entity.Account;
 import com.fpoly.asm.mapper.AccountMapper;
 import com.fpoly.asm.service.AccountService;
@@ -39,7 +41,7 @@ public class AccountController {
 
         Page<Account> account = accountService.getAll(keyword, sort, page, size);
         Page<AccountResponse> response = account.map(accountMapper::toAccountResponse);
-        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(response),"Account list retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(response), "Account list retrieved successfully"));
     }
 
     @Operation(summary = "Get Account Detail", description = "API retrieve account detail by ID from database")
@@ -70,6 +72,16 @@ public class AccountController {
         accountMapper.updateAccount(account, request);
         accountService.save(account);
         return ResponseEntity.ok(ApiResponse.success(null, "Account updated successfully"));
+    }
+
+    @Operation(summary = "Change Password", description = "API change password for user to database")
+    @PatchMapping("/change-pwd")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody @Valid AccountRequest request) {
+        log.info("change password");
+
+        Account account = accountMapper.toAccount(request);
+        accountService.save(account);
+        return ResponseEntity.ok(ApiResponse.success(null, "Account change password successfully"));
     }
 
     @Operation(summary = "Delete Account", description = "API delete account to database")

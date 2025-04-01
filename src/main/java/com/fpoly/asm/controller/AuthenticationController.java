@@ -1,10 +1,12 @@
 package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.SignInRequest;
+import com.fpoly.asm.controller.response.AccountResponse;
 import com.fpoly.asm.controller.response.TokenResponse;
 import com.fpoly.asm.service.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +25,7 @@ public class AuthenticationController {
 
     @Operation(summary = "Access token", description = "Get access token and refresh token by username and password")
     @PostMapping("/access-token")
-    public TokenResponse accessToken(@RequestBody SignInRequest request) {
+    public TokenResponse accessToken(@Valid @RequestBody SignInRequest request) {
         log.info("Access token request");
         return authenticationService.getAccessToken(request);
     }
