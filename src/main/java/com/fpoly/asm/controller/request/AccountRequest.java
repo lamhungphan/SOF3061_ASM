@@ -15,4 +15,7 @@ public class AccountRequest {
     private String phone;
     private String address;
     private Role role;
+
+    public AccountRequest(String newUser, String newPassword) {
+    }
 }

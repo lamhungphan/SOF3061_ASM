@@ -59,7 +59,7 @@ CREATE TABLE order_details (
 );
 
 INSERT INTO accounts (username, password, email, full_name, phone, address, role) VALUES
-    ('admin', '123', 'admin@samsung.com', 'Admin Samsung', '0123456789', 'Hà Nội, Việt Nam', 'ADMIN'),
+    ('director', '123', 'admin@samsung.com', 'Admin Samsung', '0123456789', 'Hà Nội, Việt Nam', 'DIRECTOR'),
     ('user1', '1234', 'user1@gmail.com', 'Nguyễn Văn A', '0987654321', 'Hồ Chí Minh, Việt Nam', 'USER'),
     ('user2', '1234', 'user2@gmail.com', 'Trần Thị B', '0971122334', 'Đà Nẵng, Việt Nam', 'USER');
 

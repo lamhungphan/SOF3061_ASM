@@ -15,5 +15,8 @@ public class AccountResponse {
     private String phone;
     private String address;
     private Role role;
+
+    public AccountResponse(int i, String testUser) {
+    }
 }
 

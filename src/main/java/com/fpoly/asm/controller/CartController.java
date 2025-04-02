@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/cart")
 @RequiredArgsConstructor
@@ -29,11 +31,15 @@ public class CartController {
 
     @Operation(summary = "Get Cart", description = "Retrieve cart for a user")
     @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponse<CartResponse>> getCart(@PathVariable Integer userId) {
+    public ResponseEntity<ApiResponse<List<CartResponse>>> getCart(@PathVariable Integer userId) {
         log.info("get cart for user {}", userId);
 
-        Cart cart = cartService.getByUserId(userId);
-        return ResponseEntity.ok(ApiResponse.success(cartMapper.toCartResponse(cart), "Cart retrieved successfully"));
+        List<Cart> cartItems = cartService.getByUserId(userId);
+        List<CartResponse> response = cartItems.stream()
+                .map(cartMapper::toCartResponse)
+                .toList();
+
+        return ResponseEntity.ok(ApiResponse.success(response, "Cart retrieved successfully"));
     }
 
     @Operation(summary = "Add Item to Cart", description = "Add a product to the user's cart")

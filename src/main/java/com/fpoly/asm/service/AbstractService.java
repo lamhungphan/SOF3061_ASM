@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.regex.Matcher;
@@ -44,11 +45,13 @@ public abstract class AbstractService<T, ID, RQ> implements BaseService<T, ID, R
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Not found"));
     }
 
+    @Transactional
     @Override
     public T save(T entity) {
         return repository.save(entity);
     }
 
+    @Transactional
     @Override
     public void delete(ID id) {
         repository.deleteById(id);

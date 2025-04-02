@@ -16,4 +16,7 @@ public class SignInRequest implements Serializable {
     private String platform; // web, mobile, tablet
     private String deviceToken; // for push notify
     private String versionApp;
+
+    public SignInRequest(String validUser, String validPassword) {
+    }
 }

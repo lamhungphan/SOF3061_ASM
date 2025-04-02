@@ -45,8 +45,6 @@ public class JwtServiceImpl implements JwtService {
         return extractClaim(token, type, Claims::getSubject);
     }
 
-
-
     private String generateToken(String username, List<String> authorities, TokenType type) {
         Map<String, Object> claims = Map.of("role", authorities);
         Date now = new Date();

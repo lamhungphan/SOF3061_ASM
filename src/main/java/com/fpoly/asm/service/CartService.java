@@ -12,7 +12,7 @@ public interface CartService {
 
     public void addToCart(Account user, Integer productId);
 
-    Cart getByUserId(Integer userId);
+    List<Cart> getByUserId(Integer userId);
 
     Cart addToCart(@Valid CartRequest request);
 
