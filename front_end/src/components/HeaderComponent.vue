@@ -66,14 +66,14 @@
               aria-expanded="false"
             >
               <i class="bi bi-person nav-icon"></i>
-              <span v-if="store.isAuthenticated">{{ store.user?.username }}</span>
+              <span v-if="loginStore.isAuthenticated">{{ loginStore.user?.username }}</span>
             </a>
             <ul
               class="dropdown-menu dropdown-menu-end"
               aria-labelledby="accountDropdown"
             >
               <!-- Khi chưa đăng nhập -->
-              <template v-if="!store.isAuthenticated">
+              <template v-if="!loginStore.isAuthenticated">
                 <li>
                   <a class="dropdown-item" href="/login" @click.prevent="showLogin">
                     Đăng nhập
@@ -128,20 +128,20 @@ import { useLoginStore } from "@/store/LoginStore";
 
 const router = useRouter();
 const cartStore = useCartStore();
-const store = useLoginStore(); 
+const loginStore = useLoginStore(); 
 
 const cart = computed(() => cartStore.cart);
 const cartQuantity = computed(() => cart.value.length);
 
-onMounted(() => {
-  const userId = store.user?.id || null;
-  if (userId) {
-    cartStore.fetchCart(userId);
-  }
+const userId = computed(() => loginStore.user?.id || null);
+
+onMounted(async () => {
+  await cartStore.initializeCart(userId.value);
+  console.log("Cart in Header:", cartStore.cart);
 });
 
 function handleLogout() {
-  store.logout();
+  loginStore.logout();
   router.push("/login");
 }
 

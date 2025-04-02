@@ -13,7 +13,7 @@
     <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
     <p v-if="store.isAuthenticated">
-      Đã đăng nhập với {{ store.user.username }}. 
+      Đã đăng nhập với {{ store.user.username }}.
       <a href="#" @click.prevent="router.push('/')">Về trang chủ</a>
     </p>
   </div>
@@ -33,7 +33,9 @@ const errorMessage = ref("");
 async function login() {
   const success = await store.login(username.value, password.value);
   if (success) {
-    if (store.isAdmin) {
+    console.log("Login success, role:", store.role);
+    console.log("Can view admin:", store.canViewManagerDashboard);
+    if (store.canViewManagerDashboard) {
       router.push("/admin");
     } else {
       router.push("/");

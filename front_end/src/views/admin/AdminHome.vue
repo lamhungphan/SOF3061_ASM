@@ -1,12 +1,12 @@
 <template>
-  <div class="container-fluid" v-if="loginStore.isAuthenticated && loginStore.isAdmin">
+  <div class="container-fluid" v-if="loginStore.isAuthenticated && loginStore.canViewManagerDashboard">
     <div class="row">
       <!-- Vertical Sidebar -->
       <div class="col-md-2 bg-dark text-light vh-100 p-3 d-flex flex-column">
         <h5><span><i class="fa-solid fa-bars"></i></span> Admin Panel</h5>
         <h6>
           <span><i class="fa-solid fa-user"></i></span> Xin chào:
-          <span class="text-warning">{{ loginStore.user?.username || "Admin" }}</span>
+          <span class="text-warning">{{ loginStore.user?.username || "User" }}</span>
         </h6>
 
         <nav class="nav flex-column nav-pills">
@@ -64,7 +64,7 @@ const router = useRouter();
 const loginStore = useLoginStore();
 
 onMounted(() => {
-  if (!loginStore.isAuthenticated || !loginStore.isAdmin) {
+  if (!loginStore.isAuthenticated || !loginStore.canViewManagerDashboard) {
     router.push("/login");
   }
 });

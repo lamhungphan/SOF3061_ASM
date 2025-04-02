@@ -25,7 +25,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const loginStore = useLoginStore();
-  if (to.meta.requiresAdmin && (!loginStore.isAuthenticated || !loginStore.isAdmin)) {
+  if (to.meta.requiresAdmin && (!loginStore.isAuthenticated || !loginStore.canViewManagerDashboard)) {
     next("/login");
   } else {
     next();

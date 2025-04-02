@@ -1,19 +1,34 @@
 import { defineStore } from "pinia";
 import axiosInstance from "@/axios/axios";
+import { decodeJWT } from "@/utils/jwt";
+import { useCartStore } from "@/store/cartStore";
 
 export const useLoginStore = defineStore("login", {
   state: () => ({
     user: JSON.parse(localStorage.getItem("user")) || null,
     token: localStorage.getItem("token") || null,
-    role: localStorage.getItem("role") || null,
     refreshToken: localStorage.getItem("refreshToken") || null,
     error: null,
     loading: false,
   }),
   getters: {
-    // Cú pháp getter theo Pinia
     isAuthenticated: (state) => !!state.token,
-    isAdmin: (state) => ["admin", "manager", "director"].includes(state.role),
+    role: (state) => {
+      if (!state.token) return null;
+      const decoded = decodeJWT(state.token);
+      const rawRole = Array.isArray(decoded?.role) ? decoded.role[0] : decoded?.role;
+      const finalRole = rawRole ? rawRole.toLowerCase() : null;
+      console.log("Getter role - decoded:", decoded, "finalRole:", finalRole);
+      return finalRole;
+    },
+    canViewManagerDashboard: (state) => {
+      const canView = ["director", "staff"].includes(state.role);
+      console.log("Getter canViewManagerDashboard - role:", state.role, "result:", canView);
+      return canView;
+    },
+    isDirector: (state) => state.role === "director",
+    isStaff: (state) => state.role === "staff",
+    canViewManagerDashboard: (state) => ["director", "staff"].includes(state.role),
   },
   actions: {
     async login(username, password) {
@@ -26,22 +41,24 @@ export const useLoginStore = defineStore("login", {
         });
 
         if (response.data.accessToken) {
-          // Lưu tất cả dữ liệu từ response
           this.token = response.data.accessToken;
           this.refreshToken = response.data.refreshToken;
-          this.role = response.data.role || "admin"; // Đảm bảo luôn có role || mặc định
           this.user = {
             username,
-            // Có thể thêm các thông tin khác từ response nếu backend trả về
             ...(response.data.user || {}),
           };
 
-          // Lưu vào localStorage
           localStorage.setItem("token", this.token);
           localStorage.setItem("refreshToken", this.refreshToken);
-          localStorage.setItem("role", this.role);
           localStorage.setItem("user", JSON.stringify(this.user));
 
+          const cartStore = useCartStore();
+          await cartStore.syncLocalCartToServer(this.user.id);
+
+          console.log("Decoded JWT:", decodeJWT(this.token));
+          console.log("Role in store:", this.role); 
+          console.log("Can view admin in store:", this.canViewManagerDashboard); 
+         
           return true;
         } else {
           this.error = "Sai tên đăng nhập hoặc mật khẩu!";
@@ -56,16 +73,15 @@ export const useLoginStore = defineStore("login", {
       }
     },
     logout() {
-      // Xóa tất cả dữ liệu liên quan
       this.user = null;
       this.token = null;
-      this.role = null;
       this.refreshToken = null;
       this.error = null;
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
-      localStorage.removeItem("role");
       localStorage.removeItem("user");
+      localStorage.removeItem("localCart");
+
     },
   },
 });

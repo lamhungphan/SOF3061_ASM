@@ -30,10 +30,12 @@ import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProductStore } from '@/store/productStore';
 import { useCartStore } from '@/store/cartStore';
+import { useLoginStore } from '@/store/LoginStore';
 
 const route = useRoute();
 const productStore = useProductStore();
 const cartStore = useCartStore();
+const loginStore = useLoginStore();
 
 const product = computed(() => productStore.productDetail || {});
 
@@ -46,9 +48,8 @@ onMounted(async () => {
 });
 
 const addToCart = async (productId) => {
-  const userId = 1; // Tạm thời gán cứng, sau này thay bằng user đăng nhập
-  const quantity = 1; // Mặc định thêm 1 sản phẩm
-
+  const userId = loginStore.isAuthenticated ? loginStore.user?.id : null;
+  const quantity = 1; 
   await cartStore.addToCart(userId, productId, quantity);
 };
 </script>
