@@ -18,8 +18,8 @@
     </div>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { onMounted, ref } from "vue";
 import OrderForm from "@/components/admin/order/OrderForm.vue";
 import OrderList from "@/components/admin/order/OrderList.vue";
@@ -39,7 +39,7 @@ const editOrder = (order) => {
 // Hủy đơn hàng
 const deleteOrder = async (orderId) => {
   await ordersStore.cancelOrder(orderId);
-  await loadOrders(currentPage.value);
+  await loadOrders(currentPage.value);  // Sửa lại gọi loadOrders
 };
 
 // Cập nhật trạng thái đơn hàng
@@ -49,11 +49,11 @@ const handleUpdate = async (orderData) => {
   selectedOrder.value = null;
 };
 
-const loadOrders = async () => {
-  const response = await ordersStore.fetchOrders(currentPage.value);
+const loadOrders = async (page = 1) => {
+  const response = await ordersStore.fetchOrders(page);  // Lấy danh sách đơn hàng theo trang
   if (response) {
     orders.value = ordersStore.orders;
-    console.log(orders.value)
+    console.log(orders.value);  // Kiểm tra dữ liệu
     totalPages.value = ordersStore.totalPages;
   }
 };
@@ -61,12 +61,11 @@ const loadOrders = async () => {
 const changePage = async (newPage) => {
   if (newPage >= 1 && newPage <= totalPages.value) {
     currentPage.value = newPage;
-    await loadCategories();
+    await loadOrders(newPage);  // Gọi loadOrders thay vì loadCategories
   }
 };
 
 onMounted(() => {
-  loadOrders();
+  loadOrders();  // Gọi loadOrders khi component được mount
 });
-  </script>
-  
+</script>

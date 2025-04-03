@@ -1,14 +1,12 @@
 <template>
-  <div>
-  <h3>Quản Lý Danh Mục</h3>
-  
+  <div>  
   <div v-if="message" :class="`alert alert-${messageType}`" role="alert">
     {{ message }}
   </div>
   
   <!-- Tìm kiếm danh mục theo ID -->
   <div class="mb-3 d-flex gap-2">
-    <input v-model="searchQuery" type="text" class="form-control" placeholder="Nhập ID danh mục..." />
+    <input v-model="searchQuery" type="text" class="form-control" placeholder="Nhập ID ngành hàng..." />
   </div>
   
   <!-- Form Thêm / Sửa danh mục -->

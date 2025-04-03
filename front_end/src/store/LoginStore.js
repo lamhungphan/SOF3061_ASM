@@ -15,12 +15,27 @@ export const useLoginStore = defineStore("login", {
     isAuthenticated: (state) => !!state.token,
     role: (state) => {
       if (!state.token) return null;
-      const decoded = decodeJWT(state.token);
-      const rawRole = Array.isArray(decoded?.role) ? decoded.role[0] : decoded?.role;
-      const finalRole = rawRole ? rawRole.toLowerCase() : null;
-      console.log("Getter role - decoded:", decoded, "finalRole:", finalRole);
-      return finalRole;
-    },
+      try {
+        const decoded = decodeJWT(state.token);    
+        let rawRole = decoded?.role;
+        
+        // Nếu `role` là mảng, lấy phần tử đầu tiên
+        if (Array.isArray(rawRole)) {
+          rawRole = rawRole.length > 0 ? rawRole[0] : null;
+        }
+        // Loại bỏ dấu [ ] nếu có trong chuỗi
+        if (typeof rawRole === "string") {
+          rawRole = rawRole.replace(/[\[\]']/g, "").trim(); 
+        }
+        const finalRole = rawRole ? rawRole.toLowerCase() : null;
+        return finalRole;
+      } catch (error) {
+        console.error("Error decoding JWT:", error);
+        return null;
+      }
+    }
+
+    ,
     canViewManagerDashboard: (state) => {
       const canView = ["director", "staff"].includes(state.role);
       console.log("Getter canViewManagerDashboard - role:", state.role, "result:", canView);
@@ -28,7 +43,6 @@ export const useLoginStore = defineStore("login", {
     },
     isDirector: (state) => state.role === "director",
     isStaff: (state) => state.role === "staff",
-    canViewManagerDashboard: (state) => ["director", "staff"].includes(state.role),
   },
   actions: {
     async login(username, password) {
@@ -55,10 +69,6 @@ export const useLoginStore = defineStore("login", {
           const cartStore = useCartStore();
           await cartStore.syncLocalCartToServer(this.user.id);
 
-          console.log("Decoded JWT:", decodeJWT(this.token));
-          console.log("Role in store:", this.role); 
-          console.log("Can view admin in store:", this.canViewManagerDashboard); 
-         
           return true;
         } else {
           this.error = "Sai tên đăng nhập hoặc mật khẩu!";

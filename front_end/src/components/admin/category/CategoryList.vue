@@ -1,7 +1,7 @@
 <template>
     <!-- Danh sách danh mục -->
     <div>
-        <h4 class="mb-3">Danh Sách Danh Mục</h4>
+        <h4 class="mb-3">Danh sách ngành hàng</h4>
         <table class="table table-bordered text-center">
             <thead>
                 <tr>

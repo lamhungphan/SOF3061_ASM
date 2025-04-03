@@ -6,38 +6,33 @@ export const useCategories = defineStore("categories", {
     categories: [],
     loading: false,
     error: null,
-    totalPage: 1,
+    totalPages: 1,
   }),
   actions: {
     async getAll() {
       try {
-        const response = await axiosInstance.get(`/store/categories`);
-        if (response.data.code === 0) return response.data.result;
+        const response = await axiosInstance.get(`/categories`);
+        if (response.data.status === 200) return response.data.data.content;
       } catch (error) {
-        console.warn("Lỗi API {}", error);
+        console.warn("Lỗi API:", error);
         return null;
       }
     },
 
-    async retrieveCategories(page = 1) {
-      // Đảm bảo page luôn bắt đầu từ 1
+    async retrieveCategories(page = 0, pageSize = 5) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.get(
-          `/store/categories/pages?page=${page}`,
-          {
-            params: {
-              page: page,
-            },
-          }
-        );
-        if (response.data) {
-          this.categories = response.data.content;
-          this.totalPages = response.data.totalPages;
+        const response = await axiosInstance.get(`/categories`, {
+          params: { page, size: pageSize },
+        });
+
+        if (response.data.status === 200) {
+          this.categories = response.data.data.content;
+          this.totalPages = response.data.data.totalPages;
           return true;
         } else {
-          this.error = "Không có danh mục";
+          this.error = response.data.message || "Không có danh mục";
           return false;
         }
       } catch (error) {
@@ -48,18 +43,16 @@ export const useCategories = defineStore("categories", {
         this.loading = false;
       }
     },
-    async createCategories(data) {
+
+    async createCategory(data) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.post("/store/categories", data);
-        if (response.data.code === 0) {
+        const response = await axiosInstance.post("/categories", data);
+        if (response.data.status === 200) {
           return { success: true, message: "Thêm danh mục thành công!" };
         } else {
-          return {
-            success: false,
-            message: response.data.message || "Lỗi không xác định!",
-          };
+          return { success: false, message: response.data.message || "Lỗi không xác định!" };
         }
       } catch (error) {
         if (error.response && error.response.status === 500) {
@@ -70,37 +63,34 @@ export const useCategories = defineStore("categories", {
         this.loading = false;
       }
     },
+
     async getCategoryById(categoryId) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.get(
-          `/store/categories/${categoryId}`
-        );
-        if (response.data.code === 0) {
-          return response.data.result; // Trả về category tìm được
+        const response = await axiosInstance.get(`/categories/${categoryId}`);
+        if (response.data.status === 200) {
+          return response.data.data;
         } else {
           this.error = response.data.message;
           return null;
         }
       } catch (error) {
-        console.error("Lỗi API: {}", error);
+        console.error("Lỗi API:", error);
         this.error = "Lỗi kết nối đến máy chủ!";
         return null;
       } finally {
         this.loading = false;
       }
     },
+
     async updateCategory(categoryId, data) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.put(
-          `/store/categories/${categoryId}`,
-          data
-        );
-        if (response.data.code === 0) {
-          return response.data.result;
+        const response = await axiosInstance.put(`/categories/${categoryId}`, data);
+        if (response.data.status === 200) {
+          return response.data.data;
         } else {
           this.error = response.data.message;
           return null;

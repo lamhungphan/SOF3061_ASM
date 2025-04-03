@@ -6,7 +6,7 @@ import CheckoutPage from "@/views/CheckoutPage.vue";
 import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import AdminHome from '@/views/admin/AdminHome.vue';
-import { useLoginStore } from "@/store/LoginStore";
+import { useLoginStore } from "@/store/loginStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +18,7 @@ const router = createRouter({
     { path: '/login', name: 'login', component: Login },
     { path: '/register', name: 'register', component: Register },
 
-    { path: '/admin', component: AdminHome, meta: { requiresAuth: true, requiresAdmin: true } },
+    { path: '/admin', name: 'admin', component: AdminHome, meta: { requiresAuth: true, requiresAdmin: true } },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })

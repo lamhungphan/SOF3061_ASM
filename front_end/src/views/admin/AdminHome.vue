@@ -1,20 +1,26 @@
 <template>
-  <div class="container-fluid" v-if="loginStore.isAuthenticated && loginStore.canViewManagerDashboard">
+  <div
+    class="container-fluid"
+    v-if="loginStore.isAuthenticated && loginStore.canViewManagerDashboard"
+  >
     <div class="row">
       <!-- Vertical Sidebar -->
       <div class="col-md-2 bg-dark text-light vh-100 p-3 d-flex flex-column">
-        <h5><span><i class="fa-solid fa-bars"></i></span> Admin Panel</h5>
         <h6>
           <span><i class="fa-solid fa-user"></i></span> Xin chào:
-          <span class="text-warning">{{ loginStore.user?.username || "User" }}</span>
+          <span class="text-warning">{{
+            loginStore.user?.username || "User"
+          }}</span>
         </h6>
 
         <nav class="nav flex-column nav-pills">
-          <a class="nav-link active" data-bs-toggle="pill" href="#tab1">Dashboard</a>
+          <a class="nav-link active" data-bs-toggle="pill" href="#tab1"
+            >Dashboard</a
+          >
           <a class="nav-link" data-bs-toggle="pill" href="#tab2">Đơn hàng</a>
-          <a class="nav-link" data-bs-toggle="pill" href="#tab3">Thành viên</a>
-          <a class="nav-link" data-bs-toggle="pill" href="#tab4">Hàng hoá</a>
-          <a class="nav-link" data-bs-toggle="pill" href="#tab5">Danh Mục</a>
+          <a class="nav-link" data-bs-toggle="pill" href="#tab3">Người dùng</a>
+          <a class="nav-link" data-bs-toggle="pill" href="#tab4">Sản phẩm</a>
+          <a class="nav-link" data-bs-toggle="pill" href="#tab5">Ngành hàng</a>
         </nav>
 
         <button class="btn btn-primary mt-auto" @click="handleLogout">
@@ -46,13 +52,15 @@
   </div>
   <div v-else class="text-center mt-5">
     <h3>Bạn không có quyền truy cập!</h3>
-    <button class="btn btn-primary" @click="router.push('/login')">Đăng nhập</button>
+    <button class="btn btn-primary" @click="router.push('/login')">
+      Đăng nhập
+    </button>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
-import { useLoginStore } from "@/store/LoginStore";
+import { useLoginStore } from "@/store/loginStore";
 import Dashboard from "@/views/admin/Dashboard.vue";
 import Order from "@/views/admin/Order.vue";
 import UserManagement from "@/views/admin/UserManagement.vue";
@@ -65,7 +73,7 @@ const loginStore = useLoginStore();
 
 onMounted(() => {
   if (!loginStore.isAuthenticated || !loginStore.canViewManagerDashboard) {
-    router.push("/login");
+    console.log("hello admin");
   }
 });
 

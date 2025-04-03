@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { useLoginStore } from "@/store/LoginStore";
+import { useLoginStore } from "@/store/loginStore";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 

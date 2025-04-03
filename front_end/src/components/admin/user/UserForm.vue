@@ -39,7 +39,7 @@
       <button type="submit" class="btn btn-primary me-2">Đăng Ký</button>
       <button type="button" class="btn btn-success me-2" @click="emit('update', user.id,user)">Cập Nhật</button>
       <button type="button" class="btn btn-danger me-2" @click="emit('delete', user.id)">Xóa</button>
-      <button type="reset" class="btn btn-warning" @click="emit('reset')">Đặt Lại</button>
+      <button type="reset" class="btn btn-warning" @click="emit('reset')">Reset</button>
     </div>
   </form>
 </template>

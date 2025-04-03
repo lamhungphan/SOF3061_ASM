@@ -4,7 +4,7 @@
     <div class="row g-2">
       <div class="col-md-4 d-flex flex-column align-items-center">
         <div class="image-preview-large border rounded mb-2">
-          <img :src="product.image" id="file" alt="Product Preview" class="preview-large-img" />
+          <img :src="product.image" id="file" alt="img" class="preview-large-img" />
         </div>
         <input type="file" id="fileUpload" class="d-none" @change="uploadImage" />
         <label for="fileUpload" class="btn btn-outline-primary btn-sm mb-2">Chọn Hình</label>

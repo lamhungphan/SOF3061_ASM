@@ -30,7 +30,7 @@ import { computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useProductStore } from '@/store/productStore';
 import { useCartStore } from '@/store/cartStore';
-import { useLoginStore } from '@/store/LoginStore';
+import { useLoginStore } from '@/store/loginStore';
 
 const route = useRoute();
 const productStore = useProductStore();

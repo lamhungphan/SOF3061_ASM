@@ -124,7 +124,7 @@
 import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useCartStore } from "@/store/cartStore";
-import { useLoginStore } from "@/store/LoginStore";
+import { useLoginStore } from "@/store/loginStore";
 
 const router = useRouter();
 const cartStore = useCartStore();

@@ -63,7 +63,7 @@
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import { computed, onMounted } from "vue";
 import { useCartStore } from "@/store/cartStore";
-import { useLoginStore } from "@/store/LoginStore";
+import { useLoginStore } from "@/store/loginStore";
 import { useProductStore } from "@/store/productStore";
 
 const loginStore = useLoginStore();

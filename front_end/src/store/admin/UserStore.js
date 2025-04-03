@@ -6,26 +6,31 @@ export const useUsers = defineStore("users", {
     users: [],
     loading: false,
     error: null,
-    totalPages: null,
+    totalPages: 1,
+    pageNumber: 0,
+    pageSize: 5,
   }),
   actions: {
     handleApiError(error) {
-      console.error("Lỗi API:", error);
-      this.error = "Lỗi kết nối đến máy chủ!";
+      console.error("API Error:", error);
+      this.error = "Connection error with the server!";
     },
 
+    // Get list of users
     async getUsers(page = 1) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.get(`/store/users?page=${page}`);
+        // API call to get the list of users
+        const response = await axiosInstance.get(`/account?page=${page - 1}&size=${this.pageSize}`);
 
-        if (response.data.content) {
-          this.users = response.data.content;
-          this.totalPages = response.data.totalPages;
+        if (response.data.data.content) {
+          this.users = response.data.data.content;
+          this.totalPages = response.data.data.totalPages;
+          this.pageNumber = page;
           return true;
         } else {
-          this.error = "Không tìm thấy máy chủ";
+          this.error = "No users found";
           return false;
         }
       } catch (error) {
@@ -36,101 +41,85 @@ export const useUsers = defineStore("users", {
       }
     },
 
-    async createUsers(data) {
+    // Get detail of a specific user
+    async getUserDetail(userId) {
       this.loading = true;
       this.error = null;
-      console.log("Dữ liệu gửi lên server:", data);
       try {
-        const response = await axiosInstance.post("/store/users", data);
-        if (response.data.code === 0) {
-          return { success: true, message: "Thêm danh mục thành công!" };
-        } else {
-          return {
-            success: false,
-            message: response.data.message || "Lỗi không xác định!",
-          };
-        }
+        const response = await axiosInstance.get(`/account/${userId}`);
+        return response.data.data || null;
       } catch (error) {
         this.handleApiError(error);
-        return { success: false, message: "Lỗi kết nối đến máy chủ!" };
+        return null;
       } finally {
         this.loading = false;
       }
     },
 
-    async updateUser(userId, data) {
+    // Create a new user
+    async createUser(data) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.put(
-          `/store/users/${userId}`,
-          data
-        );
+        const response = await axiosInstance.post("/account", data);
         if (response.data.code === 0) {
-          return { success: true, message: "Thêm danh mục thành công!" };
+          return { success: true, message: "User created successfully!" };
         } else {
           return {
             success: false,
-            message: response.data.message || "Lỗi không xác định!",
+            message: response.data.message || "Unknown error!",
           };
         }
       } catch (error) {
         this.handleApiError(error);
-        return { success: false, message: "Lỗi kết nối đến máy chủ!" };
+        return { success: false, message: "Connection error with the server!" };
       } finally {
         this.loading = false;
       }
     },
-    async updateAvatar(userId, file) {
+
+    // Update an existing user
+    async updateUser(userId, data) {
       this.loading = true;
       this.error = null;
-      let response;
       try {
-        const formData = new FormData();
-        formData.append("avatar", file.get("avatar"));
-        response = await axiosInstance.post(
-          `/store/users/upload-avatar/${userId}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const response = await axiosInstance.put(`/account/${userId}`, data);
         if (response.data.code === 0) {
-          return response.data.result;
+          return { success: true, message: "User updated successfully!" };
         } else {
-          this.error = response.data.message;
-          return this.error;
+          return {
+            success: false,
+            message: response.data.message || "Unknown error!",
+          };
         }
       } catch (error) {
-        alert("Lỗi API:", error.message);
-        return null;
+        this.handleApiError(error);
+        return { success: false, message: "Connection error with the server!" };
       } finally {
         this.loading = false;
       }
     },
+
+    // Delete an existing user
     async deleteUser(userId) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.delete(`/store/users/${userId}`);
+        const response = await axiosInstance.delete(`/account/${userId}`);
         if (response.data.code === 0) {
-          return response.data.result;
+          return { success: true, message: "User deleted successfully!" };
         } else {
-          this.error = response.data.message;
-          return null;
+          return {
+            success: false,
+            message: response.data.message || "Unknown error!",
+          };
         }
       } catch (error) {
-        console.error("Lỗi API:", error);
-        this.error = "Lỗi kết nối đến máy chủ!";
-        return null;
+        this.handleApiError(error);
+        return { success: false, message: "Connection error with the server!" };
       } finally {
         this.loading = false;
       }
-    },
-    setUsers(users) {
-      this.users = users;
     },
   },
 });
