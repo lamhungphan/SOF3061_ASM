@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import axios from 'axios';
 
 export const useCartStore = defineStore('cart', () => {
@@ -16,19 +16,16 @@ export const useCartStore = defineStore('cart', () => {
     localStorage.setItem('localCart', JSON.stringify(cartItems));
   };
 
-  // Lấy giỏ hàng từ server
   const fetchCart = async (userId) => {
     try {
       const response = await axios.get(`http://localhost:8080/cart/${userId}`);
-      cart.value = Array.isArray(response.data.data) ? response.data.data : (response.data.data ? [response.data.data] : []);
-      console.log('Dữ liệu giỏ hàng từ server:', cart.value);
+      cart.value = Array.isArray(response.data.data) ? response.data.data : [];
     } catch (error) {
-      console.error('Lỗi khi lấy giỏ hàng:', error.response?.data || error.message);
-      cart.value = []; // Đặt mặc định nếu lỗi
+      console.error('Lỗi khi lấy giỏ hàng:', error);
+      cart.value = [];
     }
   };
 
-  // Thêm sản phẩm vào giỏ hàng
   const addToCart = async (userId, productId, quantity) => {
     try {
       if (!userId) {
@@ -62,7 +59,6 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  // Xóa sản phẩm khỏi giỏ hàng
   const removeFromCart = async (userId, productId) => {
     try {
       if (!userId) {
@@ -100,5 +96,9 @@ export const useCartStore = defineStore('cart', () => {
     }
   };
 
-  return { cart, fetchCart, addToCart, removeFromCart, syncLocalCartToServer, initializeCart };
+  const cartTotal = computed(() => {
+    return cart.value.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 0), 0);
+  }); 
+
+  return { cart, fetchCart, addToCart, removeFromCart, syncLocalCartToServer, initializeCart, cartTotal };
 });

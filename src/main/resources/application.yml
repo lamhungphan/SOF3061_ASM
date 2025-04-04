@@ -20,4 +20,4 @@ jwt:
   expiryMinutes: ${JWT_EXPIRY_MINUTES:60}
   expiryDay: ${JWT_EXPIRY_DAY:14}
   accessKey: ${JWT_ACCESS_KEY:K2CIW323KfvOBOSOBfWUqu996XxNx6lYyvwKyuVIYuXZHxfTcwnHYvLEya99x0kJhr7JJIt00RIOSS3KAFJBVg==}
-  refreshKey: ${JWT_REFRESH_KEY:ZRD0bjPnZKiVqYPzbSl23Dc2l5xks9AeCP4xXbjz1W4R+8Uz8c3A0yqJkluJW8/BdsmUikagb4ZBx6sLwtg2eg==}
+  refreshKey: ${JWT_REFRESH_KEY:ZRD0bjPnZKiVqYPzbSl23Dc2l5fks9AeCP4xXbjz1W4R+8Uz8c3A0yqJkluJW8/BdsmUikagb4ZBx6sLwtg2eg==}

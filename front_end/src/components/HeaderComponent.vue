@@ -142,7 +142,7 @@ onMounted(async () => {
 
 function handleLogout() {
   loginStore.logout();
-  router.push("/login");
+  router.push("/");
 }
 
 function showLogin() {

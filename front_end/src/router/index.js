@@ -17,7 +17,6 @@ const router = createRouter({
     { path: "/checkout", component: CheckoutPage, meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: Login },
     { path: '/register', name: 'register', component: Register },
-
     { path: '/admin', name: 'admin', component: AdminHome, meta: { requiresAuth: true, requiresAdmin: true } },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],

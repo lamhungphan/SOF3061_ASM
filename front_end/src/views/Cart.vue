@@ -80,13 +80,12 @@ const enrichedCart = computed(() => {
     return {
       ...item,
       name: product.name || item.name || "Unknown Product",
-      image: product.image || item.image || "https://via.placeholder.com/80",
+      image: product.image || item.image || "img",
       price: product.price || item.price || 0,
     };
   });
 });
 
-// Load dữ liệu khi component mount
 onMounted(async () => {
   cartStore.initializeCart(userId.value);
   await productStore.fetchProducts();
