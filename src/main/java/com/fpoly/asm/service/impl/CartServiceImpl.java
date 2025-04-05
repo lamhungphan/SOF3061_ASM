@@ -38,27 +38,56 @@ public class CartServiceImpl implements CartService {
         return cartItems;
     }
 
-
     @Override
-    @Transactional
-    public void addToCart(Account user, Integer productId) {
-        log.info("Adding product {} to cart for user {}", productId, user.getId());
-        Product product = productRepository.findById(productId)
+    public Cart updateCart(CartRequest request) {
+        log.info("Updating cart with request: userId={}, productId={}, quantity={}",
+                request.getUserId(), request.getProductId(), request.getQuantity());
+
+        Account user = accountRepository.findById(request.getUserId())
                 .orElseThrow(() -> {
-                    log.error("Product not found with ID: {}", productId);
+                    log.error("User not found with ID: {}", request.getUserId());
+                    return new ResourceNotFoundException("User not found");
+                });
+
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> {
+                    log.error("Product not found with ID: {}", request.getProductId());
                     return new ResourceNotFoundException("Product not found");
                 });
 
         Cart cartItem = cartRepository.findByUserAndProduct(user, product)
-                .orElseGet(() -> {
-                    log.info("Creating new cart item for user {} and product {}", user.getId(), productId);
-                    return new Cart(user, product, 0);
+                .orElseThrow(() -> {
+                    log.error("Cart item not found for user {} and product {}", request.getUserId(), request.getProductId());
+                    return new ResourceNotFoundException("Cart item not found");
                 });
 
-        cartItem.setQuantity(cartItem.getQuantity() + 1);
-        cartRepository.save(cartItem);
-        log.info("Added product {} to cart, new quantity: {}", productId, cartItem.getQuantity());
+        cartItem.setQuantity(request.getQuantity());  // Update the quantity
+        Cart updatedCart = cartRepository.save(cartItem);  // Save the updated cart item
+        log.info("Updated cart item, new quantity: {}", updatedCart.getQuantity());
+
+        return updatedCart;
     }
+
+
+//    @Transactional
+//    public void addToCart(Account user, Integer productId) {
+//        log.info("Adding product {} to cart for user {}", productId, user.getId());
+//        Product product = productRepository.findById(productId)
+//                .orElseThrow(() -> {
+//                    log.error("Product not found with ID: {}", productId);
+//                    return new ResourceNotFoundException("Product not found");
+//                });
+//
+//        Cart cartItem = cartRepository.findByUserAndProduct(user, product)
+//                .orElseGet(() -> {
+//                    log.info("Creating new cart item for user {} and product {}", user.getId(), productId);
+//                    return new Cart(user, product, 0);
+//                });
+//
+//        cartItem.setQuantity(cartItem.getQuantity() + 1);
+//        cartRepository.save(cartItem);
+//        log.info("Added product {} to cart, new quantity: {}", productId, cartItem.getQuantity());
+//    }
 
     @Override
     @Transactional

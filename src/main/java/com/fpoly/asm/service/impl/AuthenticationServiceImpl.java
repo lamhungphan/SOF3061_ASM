@@ -1,6 +1,7 @@
 package com.fpoly.asm.service.impl;
 
 import com.fpoly.asm.controller.request.SignInRequest;
+import com.fpoly.asm.controller.response.AccountResponse;
 import com.fpoly.asm.controller.response.TokenResponse;
 import com.fpoly.asm.entity.Account;
 import com.fpoly.asm.exception.ForBiddenException;
@@ -41,26 +42,42 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         List<String> authorities = new ArrayList<>();
         try {
-            // Thực hiện xác thực với username và password
-            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
 
             log.info("isAuthenticated = {}", authenticate.isAuthenticated());
             log.info("Authorities: {}", authenticate.getAuthorities().toString());
-            authorities.add(authenticate.getAuthorities().toString());
 
-            // Nếu xác thực thành công, lưu thông tin vào SecurityContext
+            // Lưu quyền
+            authenticate.getAuthorities().forEach(auth -> authorities.add(auth.getAuthority()));
+
+            // Gán vào SecurityContext
             SecurityContextHolder.getContext().setAuthentication(authenticate);
         } catch (BadCredentialsException | DisabledException e) {
             log.error("Login fail, message={}", e.getMessage());
             throw new AccessDeniedException(e.getMessage());
         }
 
+        // Lấy thông tin account
+        Account account = accountRepository.findByUsername(request.getUsername());
+
+        // Tạo token
         String accessToken = jwtService.generateAccessToken(request.getUsername(), authorities);
         String refreshToken = jwtService.generateRefreshToken(request.getUsername(), authorities);
 
+        // Map sang AccountResponse
+        AccountResponse accountResponse = AccountResponse.builder()
+                .id(account.getId())
+                .username(account.getUsername())
+                .email(account.getEmail())
+                .build();
+
+        // Trả kết quả
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .account(accountResponse)
                 .build();
     }
 
@@ -84,7 +101,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             // generate new access token
             String accessToken = jwtService.generateAccessToken(user.getUsername(), authorities);
 
-            return TokenResponse.builder().accessToken(accessToken).refreshToken(request).build();
+            return TokenResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(request)
+                    .account(AccountResponse.builder()
+                            .id(user.getId())
+                            .username(user.getUsername())
+                            .email(user.getEmail())
+                            .build())
+                    .build();
         } catch (Exception e) {
             log.error("Access denied! errorMessage: {}", e.getMessage());
             throw new ForBiddenException(e.getMessage());

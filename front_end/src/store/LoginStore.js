@@ -18,27 +18,20 @@ export const useLoginStore = defineStore("login", {
       try {
         const decoded = decodeJWT(state.token);    
         let rawRole = decoded?.role;
-        
-        // Nếu `role` là mảng, lấy phần tử đầu tiên
+
         if (Array.isArray(rawRole)) {
           rawRole = rawRole.length > 0 ? rawRole[0] : null;
         }
-        // Loại bỏ dấu [ ] nếu có trong chuỗi
         if (typeof rawRole === "string") {
           rawRole = rawRole.replace(/[\[\]']/g, "").trim(); 
         }
-        const finalRole = rawRole ? rawRole.toLowerCase() : null;
-        return finalRole;
+        return rawRole ? rawRole.toLowerCase() : null;
       } catch (error) {
-        console.error("Error decoding JWT:", error);
         return null;
       }
-    }
-
-    ,
+    },
     canViewManagerDashboard: (state) => {
       const canView = ["director", "staff"].includes(state.role);
-      console.log("Getter canViewManagerDashboard - role:", state.role, "result:", canView);
       return canView;
     },
     isDirector: (state) => state.role === "director",
@@ -57,17 +50,24 @@ export const useLoginStore = defineStore("login", {
         if (response.data.accessToken) {
           this.token = response.data.accessToken;
           this.refreshToken = response.data.refreshToken;
+          
+          // Lưu user từ response (chứa ID)
           this.user = {
             username,
-            ...(response.data.user || {}),
+            ...(response.data.account || {}),
           };
 
           localStorage.setItem("token", this.token);
           localStorage.setItem("refreshToken", this.refreshToken);
           localStorage.setItem("user", JSON.stringify(this.user));
 
+          // ✅ Lấy userId từ response
+          const userId = this.user.id;
           const cartStore = useCartStore();
-          await cartStore.syncLocalCartToServer(this.user.id);
+
+          // ✅ Đồng bộ giỏ hàng và khởi tạo
+          await cartStore.syncLocalCartToServer(userId);
+          await cartStore.initializeCart(userId);
 
           return true;
         } else {
@@ -82,6 +82,7 @@ export const useLoginStore = defineStore("login", {
         this.loading = false;
       }
     },
+
     logout() {
       this.user = null;
       this.token = null;
@@ -91,7 +92,6 @@ export const useLoginStore = defineStore("login", {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
       localStorage.removeItem("localCart");
-
     },
   },
 });

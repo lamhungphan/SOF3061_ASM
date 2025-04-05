@@ -51,6 +51,16 @@ public class CartController {
         return ResponseEntity.ok(ApiResponse.success(cartMapper.toCartResponse(cart), "Product added to cart successfully"));
     }
 
+    @Operation(summary = "Update Item Quantity in Cart", description = "Update the quantity of a product in the user's cart")
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponse<CartResponse>> updateCart(@Valid @RequestBody CartRequest request) {
+        log.info("Update product {} quantity to {} in cart of user {}",
+                request.getProductId(), request.getQuantity(), request.getUserId());
+
+        Cart cart = cartService.updateCart(request);
+        return ResponseEntity.ok(ApiResponse.success(cartMapper.toCartResponse(cart), "Cart updated successfully"));
+    }
+
     @Operation(summary = "Remove Item from Cart", description = "Remove a product from the user's cart")
     @DeleteMapping("/remove/{userId}/{productId}")
     public ResponseEntity<ApiResponse<Void>> removeFromCart(@PathVariable Integer userId, @PathVariable Integer productId) {
