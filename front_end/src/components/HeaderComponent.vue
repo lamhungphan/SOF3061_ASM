@@ -22,21 +22,12 @@
       <div class="collapse navbar-collapse" id="navbarScroll">
         <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
           <li class="nav-item">
-            <RouterLink class="nav-link active" to="/">Samsung Galaxy</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link active" to="/">Galaxy Tab</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link active" to="/">Galaxy Watch</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link active" to="/">Phụ kiện</RouterLink>
+            <RouterLink class="nav-link active" to="/">About Me</RouterLink>
           </li>
         </ul>
-        <form class="d-flex" role="search">
+        <form class="d-flex" role="search" style="width: 35%">
           <input
-            class="form-control me-2"
+            class="form-control w-150 me-2"
             type="search"
             placeholder="Galaxy S25 Ultra"
             aria-label="Search"
@@ -44,9 +35,10 @@
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
 
-        <ul class="navbar-nav ms-2">
+        <ul class="navbar-nav ms-auto d-flex align-items-center">
+
           <!-- Giỏ hàng -->
-          <li class="nav-item">
+          <li class="nav-item me-4">
             <RouterLink to="/cart" class="nav-link position-relative">
               <i class="bi bi-cart nav-icon"></i>
               <span v-if="cartQuantity > 0" class="badge bg-danger">
@@ -56,7 +48,7 @@
           </li>
 
           <!-- Tài khoản -->
-          <li class="nav-item dropdown">
+          <li class="nav-item me-4 dropdown">
             <a
               class="nav-link dropdown-toggle"
               href="#"
@@ -66,7 +58,9 @@
               aria-expanded="false"
             >
               <i class="bi bi-person nav-icon"></i>
-              <span v-if="loginStore.isAuthenticated">{{ loginStore.user?.username }}</span>
+              <span v-if="loginStore.isAuthenticated">{{
+                loginStore.user?.username
+              }}</span>
             </a>
             <ul
               class="dropdown-menu dropdown-menu-end"
@@ -75,12 +69,20 @@
               <!-- Khi chưa đăng nhập -->
               <template v-if="!loginStore.isAuthenticated">
                 <li>
-                  <a class="dropdown-item" href="/login" @click.prevent="showLogin">
+                  <a
+                    class="dropdown-item"
+                    href="/login"
+                    @click.prevent="showLogin"
+                  >
                     Đăng nhập
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/register" @click.prevent="showRegister">
+                  <a
+                    class="dropdown-item"
+                    href="/register"
+                    @click.prevent="showRegister"
+                  >
                     Đăng ký
                   </a>
                 </li>
@@ -107,12 +109,30 @@
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="#" @click.prevent="handleLogout">
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click.prevent="handleLogout"
+                  >
                     Đăng xuất
                   </a>
                 </li>
               </template>
             </ul>
+          </li>
+
+          <li class="nav-item d-flex align-items-center">
+            <div class="form-check form-switch m-0">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="langSwitch"
+                @change="toggleLanguage"
+              />
+              <label class="form-check-label text-white" for="langSwitch">
+                <span id="langLabel">EN</span>
+              </label>
+            </div>
           </li>
         </ul>
       </div>
@@ -128,7 +148,7 @@ import { useLoginStore } from "@/store/loginStore";
 
 const router = useRouter();
 const cartStore = useCartStore();
-const loginStore = useLoginStore(); 
+const loginStore = useLoginStore();
 
 const cart = computed(() => cartStore.cart);
 const cartQuantity = computed(() => cart.value.length);
@@ -151,6 +171,19 @@ function showLogin() {
 
 function showRegister() {
   router.push("/register");
+}
+
+function toggleLanguage() {
+  const checkbox = document.getElementById("langSwitch");
+  const label = document.getElementById("langLabel");
+
+  if (checkbox.checked) {
+    label.textContent = "VI";
+    // Thêm xử lý chuyển sang tiếng Việt tại đây
+  } else {
+    label.textContent = "EN";
+    // Thêm xử lý chuyển sang tiếng Anh tại đây
+  }
 }
 </script>
 
@@ -187,4 +220,11 @@ function showRegister() {
 .dropdown-menu {
   width: 150px;
 }
+
+.form-check-label span {
+  display: inline-block;
+  width: 50px;
+  text-align: center;
+}
+
 </style>

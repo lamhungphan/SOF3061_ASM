@@ -1,6 +1,7 @@
 package com.fpoly.asm.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class OrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
@@ -26,9 +27,11 @@ public class OrderDetail {
     private Product product;
 
     @Column(nullable = false)
+    @Positive
     private Integer quantity;
 
     @Column(nullable = false)
+    @Positive
     private Double price;
 }
 

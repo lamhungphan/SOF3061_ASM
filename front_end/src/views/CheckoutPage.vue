@@ -43,16 +43,12 @@
                     />
                   </div>
                   <div class="mb-3">
-                    <label class="form-label fw-medium"
-                      >Phương thức thanh toán</label
-                    >
+                    <label class="form-label fw-medium">Phương thức thanh toán</label>
                     <select
                       v-model="customer.paymentMethod"
                       class="form-select rounded-3"
                     >
-                      <option value="cod">
-                        💰 Thanh toán khi nhận hàng (COD)
-                      </option>
+                      <option value="cod">💰 Thanh toán khi nhận hàng (COD)</option>
                       <option value="bank">🏦 Chuyển khoản ngân hàng</option>
                     </select>
                   </div>
@@ -69,7 +65,6 @@
                     :item="item"
                     :is-last-item="index === cartStore.cart.length - 1"
                     :is-show-total="true"
-                    @updateTotal="updateTotal"
                   />
                 </div>
                 <p v-else class="text-muted text-center mt-4">
@@ -86,8 +81,10 @@
               <button
                 type="submit"
                 class="btn btn-success fw-semibold rounded-3 py-2"
+                @click="submitOrder"
+                :disabled="isSubmitting"
               >
-                Thanh toán
+                {{ isSubmitting ? 'Đang xử lý...' : 'Thanh toán' }}
               </button>
             </div>
           </div>
@@ -101,12 +98,18 @@
 import HeaderComponent from "@/components/HeaderComponent.vue";
 import CartItem from "@/components/CheckoutCart.vue";
 import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import { useCartStore } from "@/store/cartStore";
 import { useProductStore } from "@/store/productStore";
+import { useOrderStore } from "@/store/orderStore";
+import { useLoginStore } from "@/store/loginStore";
 
 const cartStore = useCartStore();
 const productStore = useProductStore();
-const userId = localStorage.getItem("userId");
+const orderStore = useOrderStore();
+const loginStore = useLoginStore();
+const router = useRouter();
+const isSubmitting = ref(false);
 
 const customer = ref({
   name: "",
@@ -122,11 +125,15 @@ const totalPrice = computed(() => {
   }, 0);
 });
 
-// Khởi tạo dữ liệu khi component được mount
 onMounted(async () => {
+  const userId = loginStore.userId;
+  if (!userId) {
+    router.push("/login");
+    return;
+  }
   await Promise.all([
-    cartStore.initializeCart(userId), // Tải giỏ hàng
-    productStore.fetchProducts(), // Tải danh sách sản phẩm
+    cartStore.initializeCart(userId),
+    productStore.fetchProducts(),
   ]);
 });
 
@@ -135,16 +142,47 @@ const formatPrice = (price) => {
   return price.toLocaleString("vi-VN") + "₫";
 };
 
-const submitOrder = () => {
+const submitOrder = async () => {
   if (!cartStore.cart.length) {
     alert("🛑 Giỏ hàng của bạn đang trống!");
     return;
   }
 
-  alert(
-    `✅ Đơn hàng đã xác nhận!\n💵 Tổng tiền: ${formatPrice(totalPrice.value)}`
-  );
-  cartStore.cart = []; // Xóa giỏ hàng sau khi thanh toán
+  const userId = loginStore.userId;
+  if (!userId) {
+    alert("🛑 Vui lòng đăng nhập để đặt hàng!");
+    router.push("/login");
+    return;
+  }
+
+  isSubmitting.value = true;
+  try {
+    const orderData = {
+      userId: userId,
+      orderDetails: cartStore.cart.map((item) => {
+        const product = productStore.products.find((p) => p.id === item.productId);
+        return {
+          productId: item.productId,
+          quantity: item.quantity,
+          price: product?.price || 0,
+        };
+      }),
+    };
+    console.log("Order data sent to backend:", orderData);
+    const newOrder = await orderStore.createOrder(orderData);
+    if (!newOrder || !newOrder.id) {
+      throw new Error("Không nhận được ID đơn hàng từ server");
+    }
+
+    alert(`✅ Đơn hàng đã xác nhận!\n💵 Tổng tiền: ${formatPrice(totalPrice.value)}`);
+    cartStore.cart = [];
+    router.push(`/order-detail/${newOrder.id}`);
+  } catch (error) {
+    console.error("Error submitting order:", error);
+    alert("❌ Đã có lỗi xảy ra. Vui lòng thử lại!");
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
 

@@ -1,10 +1,12 @@
 package com.fpoly.asm.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -24,6 +26,7 @@ public class Order {
     private Account user;
 
     @Column(nullable = false)
+    @Positive
     private Double totalPrice;
 
     @Column(nullable = false, updatable = false)
@@ -32,12 +35,9 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status;
+    private OrderStatus status;
 
-    public enum Status {
-        PENDING, SHIPPED, COMPLETED, CANCELLED
-    }
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderDetail> orderDetails = new ArrayList<>(); // tránh NullPointerException
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails;
 }

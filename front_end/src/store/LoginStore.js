@@ -13,6 +13,7 @@ export const useLoginStore = defineStore("login", {
   }),
   getters: {
     isAuthenticated: (state) => !!state.token,
+    userId: (state) => state.user?.id || null,
     role: (state) => {
       if (!state.token) return null;
       try {

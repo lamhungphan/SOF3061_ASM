@@ -66,7 +66,7 @@ const goToCategory = (link) => {
   justify-content: center;
   align-items: center;
   height: 200px;
-  background-color: #f8f9fa; /* Màu nền nhạt để làm nổi bật hình ảnh */
+  background-color: #f8f9fa;
 }
 
 .card img {

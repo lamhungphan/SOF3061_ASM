@@ -68,27 +68,6 @@ public class CartServiceImpl implements CartService {
         return updatedCart;
     }
 
-
-//    @Transactional
-//    public void addToCart(Account user, Integer productId) {
-//        log.info("Adding product {} to cart for user {}", productId, user.getId());
-//        Product product = productRepository.findById(productId)
-//                .orElseThrow(() -> {
-//                    log.error("Product not found with ID: {}", productId);
-//                    return new ResourceNotFoundException("Product not found");
-//                });
-//
-//        Cart cartItem = cartRepository.findByUserAndProduct(user, product)
-//                .orElseGet(() -> {
-//                    log.info("Creating new cart item for user {} and product {}", user.getId(), productId);
-//                    return new Cart(user, product, 0);
-//                });
-//
-//        cartItem.setQuantity(cartItem.getQuantity() + 1);
-//        cartRepository.save(cartItem);
-//        log.info("Added product {} to cart, new quantity: {}", productId, cartItem.getQuantity());
-//    }
-
     @Override
     @Transactional
     public void removeFromCart(Integer userId, Integer productId) {

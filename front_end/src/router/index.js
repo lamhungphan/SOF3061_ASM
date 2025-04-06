@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useLoginStore } from "@/store/loginStore";
+
 import HomeView from '../views/Home.vue'
 import Cart from '@/views/Cart.vue';
 import ProductDetail from '@/views/ProductDetail.vue';
@@ -6,7 +8,9 @@ import CheckoutPage from "@/views/CheckoutPage.vue";
 import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import AdminHome from '@/views/admin/AdminHome.vue';
-import { useLoginStore } from "@/store/loginStore";
+import OrderPage from '@/views/OrderPage.vue';
+import OrderDetailsPage from '@/views/OrderDetailsPage.vue';
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,17 +22,27 @@ const router = createRouter({
     { path: '/login', name: 'login', component: Login },
     { path: '/register', name: 'register', component: Register },
     { path: '/admin', name: 'admin', component: AdminHome, meta: { requiresAuth: true, requiresAdmin: true } },
+    { path: '/order/', component: OrderPage },
+    { path: '/order-detail/:id', component: OrderDetailsPage },
+
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })
 
 router.beforeEach((to, from, next) => {
   const loginStore = useLoginStore();
+
+  if (to.meta.requiresAuth && !loginStore.isAuthenticated) {
+    next("/login");
+    return;
+  }
+
   if (to.meta.requiresAdmin && (!loginStore.isAuthenticated || !loginStore.canViewManagerDashboard)) {
     next("/login");
-  } else {
-    next();
+    return;
   }
+  
+  next();
 });
 
 export default router

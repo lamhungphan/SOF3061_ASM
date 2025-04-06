@@ -51,23 +51,23 @@ public class OrderDetailController {
         return ResponseEntity.ok(ApiResponse.success(orderDetailMapper.toOrderDetailResponse(orderDetail), "Order detail retrieved successfully"));
     }
 
-    @Operation(summary = "Create Order Detail", description = "API add new order detail to database")
-    @PostMapping
-    public ResponseEntity<ApiResponse<OrderDetailResponse>> createOrderDetail(@Valid @RequestBody OrderDetailRequest request) {
-        log.info("Creating new order detail for order ID: {}, product ID: {}, quantity: {}",
-                request.getOrderId(), request.getProductId(), request.getQuantity());
-
-        OrderDetail orderDetail = orderDetailMapper.toOrderDetail(request);
-        OrderDetail savedOrderDetail = orderDetailService.save(orderDetail);
-        return ResponseEntity.ok(ApiResponse.success(orderDetailMapper.toOrderDetailResponse(savedOrderDetail), "Order detail created successfully"));
-    }
+//    @Operation(summary = "Create Order Detail", description = "API add new order detail to database")
+//    @PostMapping
+//    public ResponseEntity<ApiResponse<OrderDetailResponse>> createOrderDetail(@Valid @RequestBody OrderDetailRequest request) {
+//        log.info("Creating new order detail for order ID: {}, product ID: {}, quantity: {}",
+//                request.getOrderId(), request.getProductId(), request.getQuantity());
+//        OrderDetail savedOrderDetail = orderDetailService.createOrderDetail(request);
+//        return ResponseEntity.ok(ApiResponse.success(orderDetailMapper.toOrderDetailResponse(savedOrderDetail), "Order detail created successfully"));
+//    }
 
     @Operation(summary = "Update Order Detail", description = "API update order detail in database")
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> updateOrderDetail(@PathVariable Integer id, @RequestBody OrderDetailRequest request) {
+    public ResponseEntity<ApiResponse<Void>> updateOrderDetail(@PathVariable Integer id, @Valid @RequestBody OrderDetailRequest request) {
         log.info("Updating order detail with ID: {}", id);
-
-        orderDetailService.update(request);
+        OrderDetail orderDetail = orderDetailService.getById(id);
+        orderDetail.setQuantity(request.getQuantity());
+        orderDetail.setPrice(request.getPrice());
+        orderDetailService.save(orderDetail);
         return ResponseEntity.ok(ApiResponse.success(null, "Order detail updated successfully"));
     }
 

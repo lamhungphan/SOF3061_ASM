@@ -35,8 +35,7 @@ public class OrderController {
             @RequestParam(required = false) String sort,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size) {
-        log.info("get All Categories");
-
+        log.info("get All Orders");
         Page<Order> order = orderService.getAll(keyword, sort, page, size);
         Page<OrderResponse> response = order.map(orderMapper::toOrderResponse);
         return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(response), "Order list retrieved successfully"));
@@ -46,26 +45,22 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<OrderResponse>> getOrder(@PathVariable Integer id) {
         log.info("get order");
-
         Order order = orderService.getById(id);
         return ResponseEntity.ok(ApiResponse.success(orderMapper.toOrderResponse(order), "Order retrieved successfully"));
     }
 
-    @Operation(summary = "Create Order", description = "API add new order to database")
+    @Operation(summary = "Create Order from Payment", description = "API to create a new order with details after successful payment")
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@Valid @RequestBody OrderRequest request) {
-        log.info("create order");
-
-        Order order = orderMapper.toOrder(request);
-        Order savedOrder = orderService.save(order);
-        return ResponseEntity.ok(ApiResponse.success(orderMapper.toOrderResponse(savedOrder), "Order created successfully"));
+        log.info("Creating order for user ID: {}", request.getUserId());
+        OrderResponse orderResponse = orderService.processPaymentAndCreateOrder(request);
+        return ResponseEntity.ok(ApiResponse.success(orderResponse, "Order created successfully after payment"));
     }
 
     @Operation(summary = "Update Order", description = "API update order in database")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> updateOrder(@PathVariable Integer id, @RequestBody OrderRequest request) {
         log.info("update order");
-
         Order order = orderService.getById(id);
         orderMapper.updateOrder(order, request);
         orderService.save(order);
@@ -76,7 +71,6 @@ public class OrderController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Integer id) {
         log.info("delete order");
-
         orderService.delete(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Order deleted successfully"));
     }
