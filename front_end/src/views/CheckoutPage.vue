@@ -103,6 +103,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useProductStore } from "@/store/productStore";
 import { useOrderStore } from "@/store/orderStore";
 import { useLoginStore } from "@/store/loginStore";
+import { toast } from 'vue3-toastify';
 
 const cartStore = useCartStore();
 const productStore = useProductStore();
@@ -144,13 +145,19 @@ const formatPrice = (price) => {
 
 const submitOrder = async () => {
   if (!cartStore.cart.length) {
-    alert("🛑 Giỏ hàng của bạn đang trống!");
+    toast.warning("Giỏ hàng của bạn đang trống", {
+      position: "bottom-center",
+      hideProgressBar: true,
+    });
     return;
   }
 
   const userId = loginStore.userId;
   if (!userId) {
-    alert("🛑 Vui lòng đăng nhập để đặt hàng!");
+    toast.info("Vui lòng đăng nhập để đặt hàng", {
+      position: "bottom-center",
+      hideProgressBar: true,
+    });
     router.push("/login");
     return;
   }
@@ -168,22 +175,31 @@ const submitOrder = async () => {
         };
       }),
     };
-    console.log("Order data sent to backend:", orderData);
+
     const newOrder = await orderStore.createOrder(orderData);
     if (!newOrder || !newOrder.id) {
       throw new Error("Không nhận được ID đơn hàng từ server");
     }
 
-    alert(`✅ Đơn hàng đã xác nhận!\n💵 Tổng tiền: ${formatPrice(totalPrice.value)}`);
+    toast.success(`✅ Đơn hàng đã xác nhận!\n💵 Tổng tiền: ${formatPrice(totalPrice.value)}`, {
+      position: "bottom-center",
+      hideProgressBar: true,
+      autoClose: 3000,
+    });
+
     cartStore.cart = [];
     router.push(`/order-detail/${newOrder.id}`);
   } catch (error) {
     console.error("Error submitting order:", error);
-    alert("❌ Đã có lỗi xảy ra. Vui lòng thử lại!");
+    toast.error("❌ Đã có lỗi xảy ra. Vui lòng thử lại!", {
+      position: "top-center",
+      hideProgressBar: true,
+    });
   } finally {
     isSubmitting.value = false;
   }
 };
+
 </script>
 
 <style scoped>

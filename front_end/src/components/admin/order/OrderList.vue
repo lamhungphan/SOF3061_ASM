@@ -117,7 +117,7 @@ const changePage = async (newPage) => {
 };
 
 onMounted(async () => {
-  await orderStore.fetchOrders(1);  // Lấy dữ liệu trang 1
+  await orderStore.fetchOrders(1);
 });
 </script>
 

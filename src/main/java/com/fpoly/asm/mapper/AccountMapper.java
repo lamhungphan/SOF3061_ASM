@@ -1,6 +1,7 @@
 package com.fpoly.asm.mapper;
 
 import com.fpoly.asm.controller.request.AccountRequest;
+import com.fpoly.asm.controller.request.PasswordChangeRequest;
 import com.fpoly.asm.controller.response.AccountResponse;
 import com.fpoly.asm.entity.Account;
 import org.mapstruct.Mapper;
@@ -13,4 +14,7 @@ public interface AccountMapper {
     AccountResponse toAccountResponse(Account account);
 
     void updateAccount(@MappingTarget Account account, AccountRequest request);
+
+    void updatePassword(@MappingTarget Account account, PasswordChangeRequest request);
+
 }

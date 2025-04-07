@@ -46,7 +46,7 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private String generateToken(String username, List<String> authorities, TokenType type) {
-        Map<String, Object> claims = Map.of("role", authorities);
+        Map<String, Object> claims = Map.of("role", authorities); // them id vao token
         Date now = new Date();
         Date expiration = new Date(now.getTime() + getExpirationTime(type));
 

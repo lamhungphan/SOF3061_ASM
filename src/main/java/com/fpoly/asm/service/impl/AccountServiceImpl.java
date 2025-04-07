@@ -1,6 +1,7 @@
 package com.fpoly.asm.service.impl;
 
 import com.fpoly.asm.controller.request.AccountRequest;
+import com.fpoly.asm.controller.request.PasswordChangeRequest;
 import com.fpoly.asm.entity.Account;
 import com.fpoly.asm.exception.ResourceNotFoundException;
 import com.fpoly.asm.repository.AccountRepository;
@@ -25,6 +26,11 @@ public class AccountServiceImpl extends AbstractService<Account, Integer, Accoun
             throw new ResourceNotFoundException("Account not found with username: " + username);
         }
         return account;
+    }
+
+    @Override
+    public void updatePassword(PasswordChangeRequest request) {
+
     }
 
     @Override

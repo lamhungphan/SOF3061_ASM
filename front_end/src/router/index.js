@@ -10,6 +10,8 @@ import Register from '@/views/Register.vue';
 import AdminHome from '@/views/admin/AdminHome.vue';
 import OrderPage from '@/views/OrderPage.vue';
 import OrderDetailsPage from '@/views/OrderDetailsPage.vue';
+import ChangePassword from '@/views/ChangePassword.vue';
+import EditProfile from '@/views/EditProfile.vue';
 
 
 const router = createRouter({
@@ -21,6 +23,11 @@ const router = createRouter({
     { path: "/checkout", component: CheckoutPage, meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: Login },
     { path: '/register', name: 'register', component: Register },
+    { path: '/change-password', name: 'change_password', component: ChangePassword },
+    { path: '/edit-profile', name: 'edit-profile', component: EditProfile },
+
+
+
     { path: '/admin', name: 'admin', component: AdminHome, meta: { requiresAuth: true, requiresAdmin: true } },
     { path: '/order/', component: OrderPage },
     { path: '/order-detail/:id', component: OrderDetailsPage },

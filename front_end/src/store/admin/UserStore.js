@@ -4,6 +4,7 @@ import axiosInstance from "@/axios/axios";
 export const useUsers = defineStore("users", {
   state: () => ({
     users: [],
+    currentUser: null,
     loading: false,
     error: null,
     totalPages: 1,
@@ -16,12 +17,10 @@ export const useUsers = defineStore("users", {
       this.error = "Connection error with the server!";
     },
 
-    // Get list of users
     async getUsers(page = 1) {
       this.loading = true;
       this.error = null;
       try {
-        // API call to get the list of users
         const response = await axiosInstance.get(`/account?page=${page - 1}&size=${this.pageSize}`);
 
         if (response.data.data.content) {
@@ -41,7 +40,6 @@ export const useUsers = defineStore("users", {
       }
     },
 
-    // Get detail of a specific user
     async getUserDetail(userId) {
       this.loading = true;
       this.error = null;
@@ -56,7 +54,6 @@ export const useUsers = defineStore("users", {
       }
     },
 
-    // Create a new user
     async createUser(data) {
       this.loading = true;
       this.error = null;
@@ -78,7 +75,6 @@ export const useUsers = defineStore("users", {
       }
     },
 
-    // Update an existing user
     async updateUser(userId, data) {
       this.loading = true;
       this.error = null;
@@ -100,7 +96,6 @@ export const useUsers = defineStore("users", {
       }
     },
 
-    // Delete an existing user
     async deleteUser(userId) {
       this.loading = true;
       this.error = null;
@@ -121,5 +116,31 @@ export const useUsers = defineStore("users", {
         this.loading = false;
       }
     },
+
+    async changePassword(userId, oldPassword, newPassword) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const response = await axiosInstance.post(`/account/${userId}/change-password`, {
+          oldPassword,
+          newPassword,
+        });
+    
+        if (response.data.code === 0) {
+          return { success: true, message: "Đổi mật khẩu thành công!" };
+        } else {
+          return {
+            success: false,
+            message: response.data.message || "Đổi mật khẩu thất bại!",
+          };
+        }
+      } catch (error) {
+        this.handleApiError(error);
+        return { success: false, message: "Lỗi kết nối tới server!" };
+      } finally {
+        this.loading = false;
+      }
+    }
+    
   },
 });

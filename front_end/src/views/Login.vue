@@ -1,16 +1,18 @@
 <template>
   <div class="login-container">
-    <h2>Đăng nhập</h2>
+    <h2 class="mb-4"></h2>
 
     <form @submit.prevent="login">
-      <input v-model="username" type="text" placeholder="Username" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit" :disabled="store.loading">
+      <div class="mb-3">
+        <input v-model="username" type="text" class="form-control" placeholder="Tên người dùng" required />
+      </div>
+      <div class="mb-3">
+        <input v-model="password" type="password" class="form-control" placeholder="Mật khẩu" required />
+      </div>
+      <button type="submit" class="btn btn-warning w-100" :disabled="store.loading">
         {{ store.loading ? "Đang đăng nhập..." : "Đăng nhập" }}
       </button>
     </form>
-
-    <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
     <p v-if="store.isAuthenticated">
       Đã đăng nhập với {{ store.user.username }}.
@@ -23,55 +25,88 @@
 import { useLoginStore } from "@/store/loginStore";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import Swal from 'sweetalert2';
+
 
 const store = useLoginStore();
 const router = useRouter();
 const username = ref("");
 const password = ref("");
-const errorMessage = ref("");
+
 
 async function login() {
   const success = await store.login(username.value, password.value);
+
   if (success) {
-    console.log("Login success, role:", store.role);
-    console.log("Can view admin:", store.canViewManagerDashboard);
+    await Swal.fire({
+      icon: 'success',
+      title: 'Đăng nhập thành công!',
+      text: `Chào mừng, ${store.user?.username || "bạn"}!`,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
     if (store.canViewManagerDashboard) {
       router.push("/admin");
     } else {
       router.push("/");
     }
   } else {
-    errorMessage.value = store.error;
+    Swal.fire({
+      icon: 'error',
+      title: 'Đăng nhập thất bại',
+      text: store.error || 'Vui lòng kiểm tra lại tài khoản!',
+    });
   }
 }
+
 </script>
 
 <style scoped>
 .login-container {
-  width: 300px;
+  width: 100%;
+  max-width: 400px;
   margin: 50px auto;
-  text-align: center;
+  padding: 30px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-input {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 8px;
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
 }
+
+.form-control {
+  border-radius: 8px;
+  padding: 10px;
+}
+
 button {
-  width: 100%;
-  padding: 8px;
-  background: blue;
+  padding: 10px;
+  background-color: #ffc107;
   color: white;
   border: none;
-  cursor: pointer;
+  border-radius: 8px;
 }
+
 button:disabled {
-  background: gray;
+  background-color: #ccc;
   cursor: not-allowed;
 }
-.error {
-  color: red;
-  margin-top: 10px;
+
+.mb-3 {
+  margin-bottom: 1.5rem;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 </style>

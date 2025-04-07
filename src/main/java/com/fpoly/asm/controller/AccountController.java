@@ -1,11 +1,10 @@
 package com.fpoly.asm.controller;
 
 import com.fpoly.asm.controller.request.AccountRequest;
-import com.fpoly.asm.controller.request.SignInRequest;
+import com.fpoly.asm.controller.request.PasswordChangeRequest;
 import com.fpoly.asm.controller.response.AccountResponse;
 import com.fpoly.asm.controller.response.ApiResponse;
 import com.fpoly.asm.controller.response.PageResponse;
-import com.fpoly.asm.controller.response.TokenResponse;
 import com.fpoly.asm.entity.Account;
 import com.fpoly.asm.mapper.AccountMapper;
 import com.fpoly.asm.service.AccountService;
@@ -76,11 +75,9 @@ public class AccountController {
 
     @Operation(summary = "Change Password", description = "API change password for user to database")
     @PatchMapping("/change-pwd")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody @Valid AccountRequest request) {
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody @Valid PasswordChangeRequest request) {
         log.info("change password");
-
-        Account account = accountMapper.toAccount(request);
-        accountService.save(account);
+        accountService.updatePassword(request);
         return ResponseEntity.ok(ApiResponse.success(null, "Account change password successfully"));
     }
 

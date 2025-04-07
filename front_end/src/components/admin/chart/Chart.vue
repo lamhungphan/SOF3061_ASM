@@ -4,13 +4,13 @@
     <component :is="chartComponent" :chartData="dataChange" />
   </div>
 
-  <div>
+  <!-- <div>
   <h4>Thống kê doanh thu theo loại hàng</h4>
   <BarChart :chartData="revenueChartData" />
 
   <h4>Top 10 khách hàng VIP</h4>
   <PieChart :chartData="vipChartData" />
-</div>
+</div> -->
 
 </template>
 
