@@ -74,7 +74,7 @@ public class AccountController {
     }
 
     @Operation(summary = "Change Password", description = "API change password for user to database")
-    @PatchMapping("/change-pwd")
+    @PatchMapping("/change-password")
     public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody @Valid PasswordChangeRequest request) {
         log.info("change password");
         accountService.updatePassword(request);

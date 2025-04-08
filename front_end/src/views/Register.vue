@@ -16,16 +16,18 @@
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useUsers } from "@/store/admin/UserStore";
 import Swal from 'sweetalert2';
 
 const router = useRouter();
+const userStore = useUsers();
 const username = ref("");
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const errorMessage = ref("");
 
-const register = () => {
+const register = async () =>  {
   if (password.value !== confirmPassword.value) {
     errorMessage.value = "Mật khẩu nhập lại không khớp!";
     Swal.fire({
@@ -36,16 +38,27 @@ const register = () => {
     return;
   }
 
-  // Giả lập đăng ký thành công
-  Swal.fire({
-    icon: 'success',
-    title: 'Đăng ký thành công!',
-    text: 'Chào mừng bạn đến với hệ thống!',
-    showConfirmButton: false,
-    timer: 1500
-  }).then(() => {
-    router.push("/login"); // Chuyển hướng đến trang đăng nhập
-  });
+  const payload = {
+    username: username.value,
+    email: email.value,
+    password: password.value
+  };
+
+  const { success, message } = await userStore.createUser(payload);
+
+  if (success) {
+    await Swal.fire({
+      icon: 'success',
+      title: 'Đăng ký thành công!',
+      text: 'Chào mừng bạn đến với hệ thống!',
+      showConfirmButton: false,
+      timer: 1500
+    });
+    router.push("/login");
+  } else {
+    errorMessage.value = message;
+    Swal.fire({ icon: 'error', title: 'Đăng ký thất bại', text: message });
+  }
 };
 </script>
 

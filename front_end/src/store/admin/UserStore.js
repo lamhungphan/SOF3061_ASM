@@ -59,7 +59,7 @@ export const useUsers = defineStore("users", {
       this.error = null;
       try {
         const response = await axiosInstance.post("/account", data);
-        if (response.data.code === 0) {
+        if (response.status === 200) {
           return { success: true, message: "User created successfully!" };
         } else {
           return {
@@ -80,7 +80,7 @@ export const useUsers = defineStore("users", {
       this.error = null;
       try {
         const response = await axiosInstance.put(`/account/${userId}`, data);
-        if (response.data.code === 0) {
+        if (response.status === 200) {
           return { success: true, message: "User updated successfully!" };
         } else {
           return {
@@ -101,7 +101,7 @@ export const useUsers = defineStore("users", {
       this.error = null;
       try {
         const response = await axiosInstance.delete(`/account/${userId}`);
-        if (response.data.code === 0) {
+        if (response.status === 200) {
           return { success: true, message: "User deleted successfully!" };
         } else {
           return {
@@ -117,30 +117,35 @@ export const useUsers = defineStore("users", {
       }
     },
 
-    async changePassword(userId, oldPassword, newPassword) {
+    async changePassword(oldPassword, newPassword) {
       this.loading = true;
       this.error = null;
       try {
-        const response = await axiosInstance.post(`/account/${userId}/change-password`, {
+        const response = await axiosInstance.patch(`/account/change-password`, {
           oldPassword,
           newPassword,
         });
     
-        if (response.data.code === 0) {
-          return { success: true, message: "Đổi mật khẩu thành công!" };
+        const { status, data } = response;
+    
+        if (status === 200 && data?.message?.toLowerCase().includes("success")) {
+          return { success: true, message: data.message || "Đổi mật khẩu thành công!" };
         } else {
           return {
             success: false,
-            message: response.data.message || "Đổi mật khẩu thất bại!",
+            message: data?.message || "Đổi mật khẩu thất bại!",
           };
         }
       } catch (error) {
         this.handleApiError(error);
-        return { success: false, message: "Lỗi kết nối tới server!" };
+        return {
+          success: false,
+          message:
+            error.response?.data?.message || "Lỗi kết nối tới server!",
+        };
       } finally {
         this.loading = false;
       }
     }
-    
   },
 });

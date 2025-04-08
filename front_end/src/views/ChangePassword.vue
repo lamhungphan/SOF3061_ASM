@@ -62,7 +62,6 @@ const oldPassword = ref("");
 const newPassword = ref("");
 const confirmPassword = ref("");
 
-// Lấy user từ localStorage
 const user = JSON.parse(localStorage.getItem("user"));
 const userId = user?.id;
 
@@ -73,10 +72,9 @@ const changePassword = async () => {
   }
 
   const { success, message } = await usersStore.changePassword(
-    userId,
-    oldPassword.value,
-    newPassword.value
-  );
+  oldPassword.value,
+  newPassword.value
+);
 
   if (success) {
     toast.success(message);
