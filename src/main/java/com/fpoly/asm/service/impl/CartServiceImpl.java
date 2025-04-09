@@ -61,7 +61,7 @@ public class CartServiceImpl implements CartService {
                     return new ResourceNotFoundException("Cart item not found");
                 });
 
-        cartItem.setQuantity(request.getQuantity());  // Update the quantity
+        cartItem.setQuantity(request.getQuantity());
         Cart updatedCart = cartRepository.save(cartItem);  // Save the updated cart item
         log.info("Updated cart item, new quantity: {}", updatedCart.getQuantity());
 
@@ -156,5 +156,4 @@ public class CartServiceImpl implements CartService {
             log.warn("No cart items found to clear for user {}", userId);
         }
     }
-
 }

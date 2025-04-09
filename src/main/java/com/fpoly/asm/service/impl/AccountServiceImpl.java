@@ -35,6 +35,15 @@ public class AccountServiceImpl extends AbstractService<Account, Integer, Accoun
     }
 
     @Override
+    public Account findByEmail(String email) {
+        Account account = accountRepository.findByEmail(email);
+        if (account == null) {
+            throw new ResourceNotFoundException("Account not found with email: " + email);
+        }
+        return account;
+    }
+
+    @Override
     public void updatePassword(PasswordChangeRequest request) {
         String username = SecurityUtil.getCurrentUsername();
 

@@ -1,4 +1,4 @@
-package com.fpoly.asm.login;
+package com.fpoly.asm.intergration.login;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
