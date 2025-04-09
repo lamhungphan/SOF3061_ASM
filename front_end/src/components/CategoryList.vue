@@ -7,7 +7,7 @@
           :key="index" 
           class="col-md-3 col-sm-6 mb-4"
         >
-          <div class="card shadow-sm text-center category-card" @click="goToCategory(category.link)">
+          <div class="card shadow-sm text-center category-card" @click="goToCategory(category.id)"          >
 
             <div class="card-body">
               <h5 class="card-title">{{ category.name }}</h5>
@@ -44,8 +44,8 @@ const fetchCategories = async () => {
 
 onMounted(fetchCategories);
 
-const goToCategory = (link) => {
-  router.push(link);
+const goToCategory = (categoryId) => {
+  router.push({ path: '/', query: { categoryId } });
 };
 
 </script>

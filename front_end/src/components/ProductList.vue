@@ -1,11 +1,19 @@
 <template>
   <div class="container">
-    <h2 class="text-center mb-4">Sản Phẩm Nổi Bật 🔥</h2>
+    <!-- <h2 class="text-center mb-4">Sản Phẩm Nổi Bật 🔥</h2> -->
     <div class="row">
-      <div v-for="product in products" :key="product.id" class="col-md-3 col-sm-6 mb-4">
+      <div
+        v-for="product in products"
+        :key="product.id"
+        class="col-md-3 col-sm-6 mb-4"
+      >
         <div class="card product-card" @click="goToProduct(product.id)">
           <div class="image-container">
-            <img :src="product.image" class="card-img-top" :alt="product.name">
+            <img
+              :src="product.image"
+              class="card-img-top"
+              :alt="product.name"
+            />
           </div>
           <div class="card-body text-center">
             <h5 class="card-title">{{ product.name }}</h5>
@@ -18,23 +26,39 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from 'vue';
-import { useProductStore } from '@/store/productStore';
-import { useRouter } from 'vue-router';
+import { computed, onMounted, watch } from "vue";
+import { useProductStore } from "@/store/productStore";
+import { useRouter, useRoute } from "vue-router";
 
 const productStore = useProductStore();
-const products = computed(() => productStore.products);
-const router = useRouter();
+const router = useRouter(); // chuyển trang
+const route = useRoute(); // để đọc thông tin route hiện tại như params, query
 
-const formatPrice = (price) => price.toLocaleString('vi-VN');
+const products = computed(() => productStore.products);
+
+const formatPrice = (price) => price.toLocaleString("vi-VN");
 
 const goToProduct = (id) => {
   router.push(`/product/${id}`);
 };
 
-onMounted(() => {
-  productStore.fetchProducts();
-});
+const loadProducts = () => {
+  const categoryId = route.query.categoryId;
+  if (categoryId) {
+    productStore.fetchProductsByCategory(Number(categoryId));
+  } else {
+    productStore.fetchProducts();
+  }
+};
+
+onMounted(loadProducts);
+
+watch(
+  () => route.query.categoryId,
+  () => {
+    loadProducts();
+  }
+);
 </script>
 
 <style scoped>

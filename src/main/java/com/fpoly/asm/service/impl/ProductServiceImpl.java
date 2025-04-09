@@ -7,6 +7,10 @@ import com.fpoly.asm.repository.ProductRepository;
 import com.fpoly.asm.service.AbstractService;
 import com.fpoly.asm.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,5 +27,18 @@ public class ProductServiceImpl extends AbstractService<Product, Integer, Produc
 
     @Override
     public void update(ProductRequest request) {
+    }
+
+    @Override
+    public Page<Product> getProductByCategoryId(Integer categoryId, String sort, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(sort).descending());
+        return productRepository.findByCategoryId(categoryId, pageable);
+    }
+
+    @Override
+    public Page<Product> getProductByKeyword(String keyword, String sort, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(sort).descending());
+        String kw = "%" + keyword.toLowerCase() + "%";
+        return productRepository.findByKeyword(kw, pageable);
     }
 }

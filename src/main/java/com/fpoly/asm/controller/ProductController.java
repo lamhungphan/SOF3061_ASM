@@ -81,4 +81,34 @@ public class ProductController {
         productService.delete(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Product deleted successfully"));
     }
+
+    @Operation(summary = "Find products by category ID", description = "API to retrieve products by category with pagination and sorting")
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getByCategory(
+            @PathVariable Integer categoryId,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        log.info("Get products by categoryId: {}", categoryId);
+
+        Page<Product> products = productService.getProductByCategoryId(categoryId, sort, page, size);
+        Page<ProductResponse> respPage = products.map(productMapper::toProductResponse);
+        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(respPage), "Product list by category retrieved successfully"));
+    }
+
+    @Operation(summary = "Search products by keyword", description = "API to search products by keyword in name, description or category")
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> searchProducts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        log.info("Search products with keyword: {}", keyword);
+
+        Page<Product> products = productService.getProductByKeyword(keyword, sort, page, size);
+        Page<ProductResponse> respPage = products.map(productMapper::toProductResponse);
+        return ResponseEntity.ok(ApiResponse.success(new PageResponse<>(respPage), "Product search completed successfully"));
+    }
 }

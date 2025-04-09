@@ -2,10 +2,21 @@
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">
-        <img src="https://samcenter.vn/images/thumbs/0005426_0003182_logo%20(2).png" alt="Logo" width="120" />
+        <img
+          src="https://samcenter.vn/images/thumbs/0005426_0003182_logo%20(2).png"
+          alt="Logo"
+          width="120"
+        />
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
-        aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarScroll"
+        aria-controls="navbarScroll"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarScroll">
@@ -14,13 +25,23 @@
             <RouterLink class="nav-link active" to="/">About Me</RouterLink>
           </li>
         </ul>
-        <form class="d-flex" role="search" style="width: 35%">
-          <input class="form-control w-150 me-2" type="search" placeholder="Galaxy S25 Ultra" aria-label="Search" />
+        <form
+          class="d-flex"
+          role="search"
+          style="width: 35%"
+          @submit="onSearch"
+        >
+          <input
+            v-model="searchKeyword"
+            class="form-control w-150 me-2"
+            type="search"
+            placeholder="Galaxy S25 Ultra"
+            aria-label="Search"
+          />
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
 
         <ul class="navbar-nav ms-auto d-flex align-items-center">
-
           <!-- Giỏ hàng -->
           <li class="nav-item me-4">
             <RouterLink to="/cart" class="nav-link position-relative">
@@ -33,23 +54,40 @@
 
           <!-- Tài khoản -->
           <li class="nav-item me-4 dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="accountDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
               <i class="bi bi-person nav-icon"></i>
               <span v-if="loginStore.isAuthenticated">{{
                 loginStore.user?.username
               }}</span>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="accountDropdown"
+            >
               <!-- Khi chưa đăng nhập -->
               <template v-if="!loginStore.isAuthenticated">
                 <li>
-                  <a class="dropdown-item" href="/login" @click.prevent="showLogin">
+                  <a
+                    class="dropdown-item"
+                    href="/login"
+                    @click.prevent="showLogin"
+                  >
                     Đăng nhập
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/register" @click.prevent="showRegister">
+                  <a
+                    class="dropdown-item"
+                    href="/register"
+                    @click.prevent="showRegister"
+                  >
                     Đăng ký
                   </a>
                 </li>
@@ -58,17 +96,29 @@
               <!-- Khi đã đăng nhập -->
               <template v-else>
                 <li>
-                  <a class="dropdown-item" href="/change-password" @click.prevent="router.push('/change-password')">
+                  <a
+                    class="dropdown-item"
+                    href="/change-password"
+                    @click.prevent="router.push('/change-password')"
+                  >
                     Đổi mật khẩu
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="/edit-profile" @click.prevent="router.push('/edit-profile')">
+                  <a
+                    class="dropdown-item"
+                    href="/edit-profile"
+                    @click.prevent="router.push('/edit-profile')"
+                  >
                     Sửa thông tin
                   </a>
                 </li>
                 <li>
-                  <a class="dropdown-item" href="#" @click.prevent="handleLogout">
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                    @click.prevent="handleLogout"
+                  >
                     Đăng xuất
                   </a>
                 </li>
@@ -78,7 +128,12 @@
 
           <li class="nav-item d-flex align-items-center">
             <div class="form-check form-switch m-0">
-              <input class="form-check-input" type="checkbox" id="langSwitch" @change="toggleLanguage" />
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="langSwitch"
+                @change="toggleLanguage"
+              />
               <label class="form-check-label text-white" for="langSwitch">
                 <span id="langLabel">EN</span>
               </label>
@@ -91,14 +146,17 @@
 </template>
 
 <script setup>
-import { computed, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useCartStore } from "@/store/cartStore";
 import { useLoginStore } from "@/store/loginStore";
+import { useProductStore } from "@/store/productStore";
 
 const router = useRouter();
 const cartStore = useCartStore();
 const loginStore = useLoginStore();
+const productStore = useProductStore();
+const searchKeyword = ref("");
 
 const cart = computed(() => cartStore.cart);
 const cartQuantity = computed(() => cart.value.length);
@@ -107,8 +165,14 @@ const userId = computed(() => loginStore.user?.id || null);
 
 onMounted(async () => {
   await cartStore.initializeCart(userId.value);
-  console.log("Cart in Header:", cartStore.cart);
 });
+
+const onSearch = (e) => {
+  e.preventDefault();
+  if (searchKeyword.value.trim()) {
+    productStore.searchProducts(searchKeyword.value.trim());
+  }
+};
 
 function handleLogout() {
   loginStore.logout();

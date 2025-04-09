@@ -20,14 +20,13 @@ const router = createRouter({
     { path: '/', name: 'home', component: HomeView, },
     { path: '/cart', component: Cart },
     { path: '/product/:id', component: ProductDetail, props: true },
+    // { path: '/products', name: 'ProductList', component: () => import('@/components/ProductList.vue'),},
+    // { path: '/products/category/:categoryId', name: 'ProductList', component: () => import('@/components/ProductList.vue'),},
     { path: "/checkout", component: CheckoutPage, meta: { requiresAuth: true } },
     { path: '/login', name: 'login', component: Login },
     { path: '/register', name: 'register', component: Register },
     { path: '/change-password', name: 'change_password', component: ChangePassword },
     { path: '/edit-profile', name: 'edit-profile', component: EditProfile },
-
-
-
     { path: '/admin', name: 'admin', component: AdminHome, meta: { requiresAuth: true, requiresAdmin: true } },
     { path: '/order/', component: OrderPage },
     { path: '/order-detail/:id', component: OrderDetailsPage },
