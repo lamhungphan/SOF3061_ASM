@@ -5,10 +5,8 @@
       <div class="row justify-content-center">
         <div class="col-lg-10">
           <div class="card shadow-lg p-4">
-            <h2 class="text-center mb-4 fw-bold">🛒 Thanh Toán</h2>
-
             <div class="row">
-              <!-- Cột 1: Form thông tin -->
+
               <div class="col-md-4">
                 <h4 class="fw-semibold">📋 Thông tin giao hàng</h4>
                 <form @submit.prevent="submitOrder">
@@ -55,7 +53,6 @@
                 </form>
               </div>
 
-              <!-- Cột 2: Giỏ hàng -->
               <div class="col-md-8">
                 <h4 class="fw-semibold">🧾 Đơn hàng của bạn</h4>
                 <div v-if="cartStore.cart.length > 0">
@@ -68,12 +65,11 @@
                   />
                 </div>
                 <p v-else class="text-muted text-center mt-4">
-                  🛒 Giỏ hàng của bạn đang trống!
+                  🛒 Giỏ hàng của bạn đang trống
                 </p>
               </div>
             </div>
 
-            <!-- Phần gắn cố định -->
             <div class="d-flex justify-content-between align-items-center mt-3">
               <div class="fw-bold">
                 Tổng tiền: {{ formatPrice(totalPrice) }}
@@ -181,7 +177,7 @@ const submitOrder = async () => {
       throw new Error("Không nhận được ID đơn hàng từ server");
     }
 
-    toast.success(`✅ Đơn hàng đã xác nhận!\n💵 Tổng tiền: ${formatPrice(totalPrice.value)}`, {
+    toast.success(`Đơn hàng đã xác nhận!\n Tổng tiền: ${formatPrice(totalPrice.value)}`, {
       position: "bottom-center",
       hideProgressBar: true,
       autoClose: 3000,
@@ -191,7 +187,7 @@ const submitOrder = async () => {
     router.push(`/order-detail/${newOrder.id}`);
   } catch (error) {
     console.error("Error submitting order:", error);
-    toast.error("❌ Đã có lỗi xảy ra. Vui lòng thử lại!", {
+    toast.error("Đã có lỗi xảy ra. Vui lòng thử lại", {
       position: "top-center",
       hideProgressBar: true,
     });

@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
 
+const getOrdersByUserId = (userId) => axios.get(`http://localhost:8080/order/user/${userId}`);
+
 export const useOrderStore = defineStore('order', {
     state: () => ({
         orders: [],
@@ -29,7 +31,7 @@ export const useOrderStore = defineStore('order', {
 
         async fetchOrderById(orderId) {
             if (!orderId) {
-                console.error('❌ Không thể fetchOrderById vì orderId không hợp lệ:', orderId);
+                console.error('Không thể fetchOrderById vì orderId không hợp lệ:', orderId);
                 return;
             }
             try {
@@ -46,12 +48,12 @@ export const useOrderStore = defineStore('order', {
             try {
                 const response = await axios.post('http://localhost:8080/order', orderData);
                 const newOrder = response.data.data;
-                console.log('✅ Order created:', newOrder);
+                console.log('Order created:', newOrder);
 
                 if (newOrder && newOrder.id) {
                     this.orders.push(newOrder);
                     this.currentOrder = newOrder;
-                    await this.fetchOrderById(newOrder.id); // Gọi đúng nếu có id
+                    await this.fetchOrderById(newOrder.id);
                 } else {
                     console.warn('⚠️ createOrder trả về order không có ID:', newOrder);
                 }
@@ -105,6 +107,19 @@ export const useOrderStore = defineStore('order', {
             } catch (error) {
                 console.error('Error fetching order details:', error);
                 throw error;
+            }
+        },
+
+        async fetchOrdersByUser(userId) {
+            this.loading = true;
+            try {
+                const response = await getOrdersByUserId(userId);
+                this.orders = response.data.data;
+            } catch (err) {
+                this.error = err;
+                console.error("Failed to fetch orders:", err);
+            } finally {
+                this.loading = false;
             }
         },
     },

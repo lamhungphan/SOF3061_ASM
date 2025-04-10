@@ -1,32 +1,43 @@
 <template>
   <div class="container mt-5">
     <h2 class="text-center mb-4">📋 Danh sách đơn hàng</h2>
+
     <div v-if="orders.length">
       <ul class="list-group">
-        <li v-for="order in orders" :key="order.id" class="list-group-item mb-3">
-          <p><strong>Mã đơn hàng:</strong> {{ order.id }}</p>
-          <p><strong>Tổng tiền:</strong> {{ formatPrice(order.totalPrice) }}</p>
-          <p><strong>Trạng thái:</strong> {{ order.status }}</p>
-          <p><strong>Ngày tạo:</strong> {{ formatDate(order.orderDate) }}</p>
-          <button class="btn btn-primary" @click="viewOrderDetails(order.id)">
-            Xem chi tiết
-          </button>
-        </li>
+        <div
+          v-for="order in orders"
+          :key="order.id"
+          class="d-flex justify-content-center"
+        >
+          <li class="list-group-item mb-2 p-3" style="width: 50%">
+            <div class="d-flex justify-content-between">
+              <div>
+                <p class="mb-1"><strong>Mã:</strong> {{ order.id }}</p>
+                <p class="mb-1">
+                  <strong>Tổng:</strong> {{ formatPrice(order.totalPrice) }}
+                </p>
+              </div>
+              <div>
+                <p class="mb-1">
+                  <strong>Trạng thái:</strong> {{ order.status }}
+                </p>
+                <p class="mb-1">
+                  <strong>Ngày:</strong> {{ formatDate(order.orderDate) }}
+                </p>
+              </div>
+            </div>
+            <div class="text-end mt-2">
+              <button
+                class="btn btn-sm btn-primary"
+                @click="viewOrderDetails(order.id)"
+              >
+                Xem chi tiết
+              </button>
+            </div>
+          </li>
+        </div>
       </ul>
-      <!-- Phân trang -->
-      <nav class="mt-4">
-        <ul class="pagination justify-content-center">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <button class="page-link" @click="fetchOrders(currentPage - 1)">Trước</button>
-          </li>
-          <li v-for="page in totalPages" :key="page" class="page-item" :class="{ active: currentPage === page }">
-            <button class="page-link" @click="fetchOrders(page)">{{ page }}</button>
-          </li>
-          <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-            <button class="page-link" @click="fetchOrders(currentPage + 1)">Sau</button>
-          </li>
-        </ul>
-      </nav>
+
     </div>
     <p v-else class="text-center text-muted">Không có đơn hàng nào.</p>
   </div>
@@ -35,28 +46,20 @@
 <script setup>
 import { ref } from "vue";
 import { useOrderStore } from "@/store/orderStore";
+import { useLoginStore } from "@/store/loginStore";
 import { onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const orderStore = useOrderStore();
+const loginStore = useLoginStore();
 const router = useRouter();
-const currentPage = ref(1);
-const totalPages = ref(1);
+const route = useRoute();
 
 const orders = orderStore.orders;
 
-const fetchOrders = async (page) => {
-  try {
-    const pageData = await orderStore.fetchOrders({ page, size: 5 });
-    currentPage.value = page;
-    totalPages.value = pageData.totalPages;
-  } catch (error) {
-    console.error("Error fetching orders:", error);
-  }
-};
-
-onMounted(() => {
-  fetchOrders(1);
+onMounted(async () => {
+  const userId = route.params.id;
+  await orderStore.fetchOrdersByUser(userId);
 });
 
 const viewOrderDetails = (orderId) => {

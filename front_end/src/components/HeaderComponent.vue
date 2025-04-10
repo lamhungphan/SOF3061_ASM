@@ -28,7 +28,7 @@
         <form
           class="d-flex"
           role="search"
-          style="width: 35%"
+          style="width: 30%"
           @submit="onSearch"
         >
           <input
@@ -77,7 +77,6 @@
                   <a
                     class="dropdown-item"
                     href="/login"
-                    @click.prevent="showLogin"
                   >
                     Đăng nhập
                   </a>
@@ -86,9 +85,16 @@
                   <a
                     class="dropdown-item"
                     href="/register"
-                    @click.prevent="showRegister"
                   >
                     Đăng ký
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="#"
+                  >
+                    Quên mật khẩu
                   </a>
                 </li>
               </template>
@@ -98,8 +104,16 @@
                 <li>
                   <a
                     class="dropdown-item"
+                    href="#"
+                    @click.prevent="goToOrderHistory()"
+                  >
+                    Lịch sử mua hàng
+                  </a>
+                </li>
+                <li>
+                  <a
+                    class="dropdown-item"
                     href="/change-password"
-                    @click.prevent="router.push('/change-password')"
                   >
                     Đổi mật khẩu
                   </a>
@@ -108,7 +122,6 @@
                   <a
                     class="dropdown-item"
                     href="/edit-profile"
-                    @click.prevent="router.push('/edit-profile')"
                   >
                     Sửa thông tin
                   </a>
@@ -179,13 +192,9 @@ function handleLogout() {
   router.push("/");
 }
 
-function showLogin() {
-  router.push("/login");
-}
-
-function showRegister() {
-  router.push("/register");
-}
+const goToOrderHistory = () => {
+  router.push(`/order/user/${userId.value}`);
+};
 
 function toggleLanguage() {
   const checkbox = document.getElementById("langSwitch");

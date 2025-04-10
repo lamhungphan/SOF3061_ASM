@@ -11,7 +11,6 @@ import com.fpoly.asm.mapper.OrderMapper;
 import com.fpoly.asm.repository.OrderRepository;
 import com.fpoly.asm.repository.ProductRepository;
 import com.fpoly.asm.service.AbstractService;
-import com.fpoly.asm.service.OrderDetailService;
 import com.fpoly.asm.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,17 +24,15 @@ import java.util.stream.Collectors;
 @Service
 public class OrderServiceImpl extends AbstractService<Order, Integer, OrderRequest> implements OrderService {
     private final OrderMapper orderMapper;
-    private final OrderDetailService orderDetailService;
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
 
-
     public OrderServiceImpl(JpaRepository<Order, Integer> repository,
                             OrderMapper orderMapper,
-                            OrderDetailService orderDetailService, ProductRepository productRepository, OrderRepository orderRepository) {
+                            ProductRepository productRepository,
+                            OrderRepository orderRepository) {
         super(repository);
         this.orderMapper = orderMapper;
-        this.orderDetailService = orderDetailService;
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
     }
@@ -90,4 +87,8 @@ public class OrderServiceImpl extends AbstractService<Order, Integer, OrderReque
         return orderMapper.toOrderResponse(savedOrder);
     }
 
+    @Override
+    public List<Order> getOrdersByUserId(Integer userId) {
+        return orderRepository.findByUserId(userId);
+    }
 }

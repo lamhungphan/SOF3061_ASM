@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +62,7 @@ public class OrderDetailController {
 //    }
 
     @Operation(summary = "Update Order Detail", description = "API update order detail in database")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> updateOrderDetail(@PathVariable Integer id, @Valid @RequestBody OrderDetailRequest request) {
         log.info("Updating order detail with ID: {}", id);
@@ -71,12 +73,12 @@ public class OrderDetailController {
         return ResponseEntity.ok(ApiResponse.success(null, "Order detail updated successfully"));
     }
 
-    @Operation(summary = "Delete Order Detail", description = "API delete order detail from database")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteOrderDetail(@PathVariable Integer id) {
-        log.info("Deleting order detail with ID: {}", id);
-
-        orderDetailService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success(null, "Order detail deleted successfully"));
-    }
+//    @Operation(summary = "Delete Order Detail", description = "API delete order detail from database")
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<ApiResponse<Void>> deleteOrderDetail(@PathVariable Integer id) {
+//        log.info("Deleting order detail with ID: {}", id);
+//
+//        orderDetailService.delete(id);
+//        return ResponseEntity.ok(ApiResponse.success(null, "Order detail deleted successfully"));
+//    }
 }

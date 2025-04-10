@@ -30,12 +30,12 @@ export const useCartStore = defineStore('cart', () => {
         let localCart = getLocalCart();
         const existingItem = localCart.find(item => item.productId === productId);
         if (existingItem) {
-          existingItem.quantity += quantityChange; // Tăng hoặc giảm theo quantityChange
+          existingItem.quantity += quantityChange;
           if (existingItem.quantity <= 0) {
-            localCart = localCart.filter(item => item.productId !== productId); // Xóa nếu <= 0
+            localCart = localCart.filter(item => item.productId !== productId); 
           }
         } else if (quantityChange > 0) {
-          localCart.push({ productId, quantity: quantityChange }); // Thêm mới nếu > 0
+          localCart.push({ productId, quantity: quantityChange }); 
         }
         saveLocalCart(localCart);
         cart.value = localCart;
@@ -93,7 +93,7 @@ export const useCartStore = defineStore('cart', () => {
       const localCart = getLocalCart();
       if (localCart.length > 0) {
         for (const item of localCart) {
-          await addToCart(userId, item.productId, item.quantity); // Đồng bộ với số lượng hiện tại
+          await addToCart(userId, item.productId, item.quantity);
         }
         localStorage.removeItem('localCart');
         console.log('Đồng bộ giỏ hàng lên server thành công!');

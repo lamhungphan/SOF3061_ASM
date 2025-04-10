@@ -62,11 +62,11 @@ export const useLoginStore = defineStore("login", {
           localStorage.setItem("refreshToken", this.refreshToken);
           localStorage.setItem("user", JSON.stringify(this.user));
 
-          // ✅ Lấy userId từ response
+          // Lấy userId từ response
           const userId = this.user.id;
           const cartStore = useCartStore();
 
-          // ✅ Đồng bộ giỏ hàng và khởi tạo
+          // Đồng bộ giỏ hàng và khởi tạo
           await cartStore.syncLocalCartToServer(userId);
           await cartStore.initializeCart(userId);
 

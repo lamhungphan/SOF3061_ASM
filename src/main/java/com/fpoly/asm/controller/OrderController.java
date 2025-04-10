@@ -14,8 +14,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/order")
@@ -49,6 +52,17 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.success(orderMapper.toOrderResponse(order), "Order retrieved successfully"));
     }
 
+    @Operation(summary = "Get Orders by User ID", description = "API to retrieve orders by user ID from database")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getOrdersByUser(@PathVariable Integer userId) {
+        log.info("Get orders by userId: {}", userId);
+        List<Order> orders = orderService.getOrdersByUserId(userId);
+        List<OrderResponse> response = orders.stream()
+                .map(orderMapper::toOrderResponse)
+                .toList();
+        return ResponseEntity.ok(ApiResponse.success(response, "Orders by user retrieved successfully"));
+    }
+
     @Operation(summary = "Create Order from Payment", description = "API to create a new order with details after successful payment")
     @PostMapping
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@Valid @RequestBody OrderRequest request) {
@@ -58,6 +72,7 @@ public class OrderController {
     }
 
     @Operation(summary = "Update Order", description = "API update order in database")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> updateOrder(@PathVariable Integer id, @RequestBody OrderRequest request) {
         log.info("update order");
@@ -68,10 +83,12 @@ public class OrderController {
     }
 
     @Operation(summary = "Delete Order", description = "API delete order from database")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteOrder(@PathVariable Integer id) {
         log.info("delete order");
         orderService.delete(id);
         return ResponseEntity.ok(ApiResponse.success(null, "Order deleted successfully"));
     }
+
 }

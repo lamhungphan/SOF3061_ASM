@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +54,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Create category", description = "API add new category to database")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @PostMapping
     public ResponseEntity<ApiResponse<CategoryResponse>> createCategory(@Valid @RequestBody CategoryRequest request) {
         log.info("createCategory");
@@ -63,6 +65,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Update category", description = "API update category to database")
+    @PreAuthorize("hasRole('DIRECTOR') or hasRole('STAFF')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> updateCategory(@PathVariable Integer id, @RequestBody CategoryRequest request) {
         log.info("updateCategory");
@@ -74,6 +77,7 @@ public class CategoryController {
     }
 
     @Operation(summary = "Delete category", description = "API delete category from database")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Integer id) {
         log.info("deleteCategory");

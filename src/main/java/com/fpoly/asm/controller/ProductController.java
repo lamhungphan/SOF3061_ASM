@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,6 +54,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Create product", description = "API add new product to database")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @PostMapping
     public ResponseEntity<ApiResponse<ProductResponse>> createProduct(@Valid @RequestBody ProductRequest request) {
         log.info("Creating new product: {}", request);
@@ -63,6 +65,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Update product", description = "API update product in database")
+    @PreAuthorize("hasRole('DIRECTOR') or hasRole('STAFF')")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> updateProduct(@PathVariable Integer id, @RequestBody ProductRequest request) {
         log.info("Updating product with ID: {}", id);
@@ -74,6 +77,7 @@ public class ProductController {
     }
 
     @Operation(summary = "Delete product", description = "API delete product from database")
+    @PreAuthorize("hasRole('DIRECTOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Integer id) {
         log.info("Deleting product with ID: {}", id);

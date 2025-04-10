@@ -12,7 +12,7 @@
     </div>
 
     <div v-if="order.orderDetails?.length">
-      <h4 class="mt-4 mb-2">📦 Danh sách sản phẩm:</h4>
+      <h4 class="mt-4 mb-2">📦 Danh sách sản phẩm</h4>
       <ul class="item-list list-group">
         <li
           v-for="item in order.orderDetails"
@@ -29,9 +29,18 @@
       </ul>
     </div>
 
-    <router-link to="/orders" class="btn btn-secondary mt-3"
-      >← Quay lại danh sách</router-link
-    >
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <router-link
+        :to="`/order/user/${loginStore.user?.id}`"
+        class="btn btn-info mt-3"
+      >
+        Lịch sử mua hàng
+      </router-link>
+
+      <router-link to="/" class="btn btn-success mt-3"
+        >Tiếp tục mua sắm
+      </router-link>
+    </div>
   </div>
   <div v-else class="text-center mt-5">
     <p>Đang tải đơn hàng...</p>
@@ -40,18 +49,20 @@
 
 <script setup>
 import { computed, watch } from "vue";
-import { useOrderStore } from "@/store/orderStore";
 import { onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useOrderStore } from "@/store/orderStore";
+import { useRoute, useRouter } from "vue-router";
+import { useLoginStore } from "@/store/loginStore";
 
 const orderStore = useOrderStore();
+const loginStore = useLoginStore();
 const route = useRoute();
 const orderId = route.params.id;
 const order = computed(() => orderStore.currentOrder);
 
-// onMounted(() => {
-//   orderStore.fetchOrderById(orderId);
-// });
+onMounted(() => {
+  orderStore.fetchOrderById(orderId);
+});
 
 watch(
   () => route.params.id,
